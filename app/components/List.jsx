@@ -12,10 +12,17 @@ import FileFolder from 'material-ui/svg-icons/file/folder';
 import ActionAssignment from 'material-ui/svg-icons/action/assignment';
 import {blue500, yellow600} from 'material-ui/styles/colors';
 import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
+import MenuItem from 'material-ui/MenuItem';
+import { ENTRY_TYPES } from '../constants';
+import SelectField from 'material-ui/SelectField';
 
 export default class SchemaList extends Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      entry: {},
+    };
   }
 
   render() {
@@ -24,6 +31,12 @@ export default class SchemaList extends Component {
           <AppBar
             title="Graphyte.io"
             />
+
+          <div style={{ padding: '0 15px' }}>
+            <SelectField value={this.state.entry.type} onChange={(...args) => {console.log(args, 'type changed')}} fullWidth={true} floatingLabelText="Entry Type">
+              {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
+            </SelectField>
+          </div>
 
           <List>
             {

@@ -14,16 +14,16 @@ import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-mo
 import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Snackbar from 'material-ui/Snackbar';
+import {Tabs, Tab} from 'material-ui/Tabs';
 import Paper from 'material-ui/Paper';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
 import Subheader from 'material-ui/Subheader';
 import EntryActions from './EntryActions.jsx';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import DefinitionEditor from './DefinitionEditor.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import { ENTRY_TYPES } from '../constants';
 import Lock, { getIdToken } from '../lib/auth0';
 
 import 'brace/theme/tomorrow_night';
@@ -46,13 +46,10 @@ class App extends Component {
 
     this.handleDefChange = this.onChange.bind(this, 'definition');
     this.handleResChange = function (key, value){
-      console.log('handling res change', key, value);
       this.onChange(`resolve.${this.state.entry.name}.${key}`, value);
     }.bind(this);
     this.handleMockChange = this.onChange.bind(this, 'mock');
     this.handleTypeChange = this.handleTypeChange.bind(this);
-
-    console.log(typeof this.handleTypeChange, this.handleTypeChange.toString());
   }
 
   handleTypeChange(event, index, value) {
@@ -60,7 +57,6 @@ class App extends Component {
   }
 
   selectEntry(id) {
-    console.log('select', id);
     this.setState({ entry: this.props.list.find((item) => item.id === id) || BLANK_ENTRY });
   }
 
@@ -75,7 +71,6 @@ class App extends Component {
   }
 
   onEditName(value) {
-    console.log('2setting internal state', value, this.state.entry);
     this.state.entry.name = value;
     this.setState({
       entry: this.state.entry,
@@ -103,10 +98,6 @@ class App extends Component {
     this.setState({idToken: getIdToken()})
   }
 
-  componentWillReceiveProps(nextProps) {
-      console.log('props', nextProps);
-  }
-
   render() {
 
     let paperStyle = {
@@ -127,74 +118,51 @@ class App extends Component {
       )
       .filter(val => !!val);
 
-    console.log('stuff and crap', resolves);
-
-    console.log('render', this.props);
     return (
-      <div style={{ paddingLeft: '256px' }}>
+      <div style={{ paddingLeft: '256px', height: '100%', position: 'relative' }}>
         <MainNav login={this.showLogin} />
 
-        <Grid fluid={true}>
-          <Row>
-            <Col xs={6} md={6}>
-              <h4>Type Definitions</h4>
-            </Col>
-            <Col xs={6} md={6}>
-              <SelectField value={this.state.entry.type} onChange={this.handleTypeChange} fullWidth={true} floatingLabelText="Entry Type">
-                {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
-              </SelectField>
-            </Col>
-            <Col xs={12} md={6}>
-              <Paper style={paperStyle} zDepth={1} rounded={false}>
-                <AceEditor
-                  mode="java"
-                  theme="tomorrow_night"
-                  value={this.state.entry.definition}
-                  onChange={this.handleDefChange}
-                  name="UNIQUE_ID_OF_DIV"
-                  width="100%"
-                  editorProps={{$blockScrolling: true}}
-                />
-              </Paper>
-            </Col>
-          </Row>
-          {(possibleResolves || []).map((key, idx) => {
-            return (
-              <Paper style={paperStyle} zDepth={1} rounded={false} key={key}>
-                <Toolbar>
-                  <ToolbarGroup>
-                    <ToolbarTitle text={key} />
-                  </ToolbarGroup>
-                  {
-                    resolves[key] ? (<div></div>) : (<ToolbarGroup lastChild={true}>
-                    <IconButton touch={true} onTouchTap={() => this.handleResChange(key, '// stuff')}>
-                      <NavigationExpandMoreIcon />
-                    </IconButton>
-                  </ToolbarGroup>)
-                  }
-                </Toolbar>
-                {resolves[key] ? (<AceEditor
-                  mode="javascript"
-                  theme="tomorrow_night"
-                  value={resolves[key]}
-                  onChange={(val) => {
-                    console.log('What the butt', key, val);
-                    return this.handleResChange(key, val);
-                  }}
-                  width="100%"
-                  height="200px"
-                  name={`UNIQUE_ID_OF_DIV_${idx}`}
-                  editorProps={{$blockScrolling: true}}
-                />) : (<div></div>)}
-              </Paper>
-            );
-          })}
-          <Row>
-            <Col md={12}>
-              <EntryActions saveEntry={this.saveEntry} />
-            </Col>
-          </Row>
-        </Grid>
+        <Tabs>
+          <Tab label="Definition">
+            <DefinitionEditor onChange={this.handleDefChange} value={this.state.entry.definition} />
+          </Tab>
+          <Tab label="Resolver">
+            <Grid fluid={true}>
+              {(possibleResolves || []).map((key, idx) => {
+                return (
+                  <Paper style={paperStyle} zDepth={1} rounded={false} key={key}>
+                    <Toolbar>
+                      <ToolbarGroup>
+                        <ToolbarTitle text={key} />
+                      </ToolbarGroup>
+                      {
+                        resolves[key] ? (<div></div>) : (<ToolbarGroup lastChild={true}>
+                        <IconButton touch={true} onTouchTap={() => this.handleResChange(key, '// stuff')}>
+                          <NavigationExpandMoreIcon />
+                        </IconButton>
+                      </ToolbarGroup>)
+                      }
+                    </Toolbar>
+                    {resolves[key] ? (<AceEditor
+                      mode="javascript"
+                      theme="tomorrow_night"
+                      value={resolves[key]}
+                      onChange={(val) => this.handleResChange(key, val)}
+                      width="100%"
+                      height="200px"
+                      name={`UNIQUE_ID_OF_DIV_${idx}`}
+                      editorProps={{$blockScrolling: true}}
+                    />) : (<div></div>)}
+                  </Paper>
+                );
+              })}
+            </Grid>
+          </Tab>
+          <Tab label="Mock">
+            <h1>TODO: Add mock UI</h1>
+          </Tab>
+        </Tabs>
+
 
 
         <List
@@ -209,6 +177,8 @@ class App extends Component {
           style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
           <ContentAdd />
         </FloatingActionButton>
+
+        <EntryActions saveEntry={this.saveEntry} style={{ position: 'absolute', bottom: 0, right: 0, zIndex: 999, paddingLeft: '256px', width: '100%' }}/>
       </div>
     )
   }
