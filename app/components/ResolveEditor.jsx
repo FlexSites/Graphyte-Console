@@ -15,7 +15,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import { red700, yellow600 } from 'material-ui/styles/colors';
 import { get } from 'object-path';
-
+import Subheader from 'material-ui/Subheader';
 const DEFAULT_COLOR = '#ccc';
 
 class StateIcon extends Component {
@@ -27,7 +27,7 @@ class StateIcon extends Component {
     let color = this.props.active ? this.props.color : DEFAULT_COLOR;
 
     return (
-      <Avatar icon={this.props.icon} backgroundColor={color} style={{ margin: '0 5px', alignSelf: 'center'}} />
+      <Avatar size={30} icon={this.props.icon} backgroundColor={color} style={{ margin: '0 5px', alignSelf: 'center'}} />
     );
   }
 }
@@ -54,17 +54,19 @@ export default class ResolveEditor extends Component {
   render() {
     console.log('theme', this.context);
     let toolbar = (
-      <Toolbar onTouchTap={this.toggle.bind(this)} style={{ cursor: 'pointer', borderBottom: 'solid 1px #ccc' }}>
+      <Toolbar onTouchTap={this.toggle.bind(this)} style={{ cursor: 'pointer', borderBottom: 'solid 1px #000' }}>
         <ToolbarGroup>
           <ToolbarTitle text={this.props.field} />
         </ToolbarGroup>
         <ToolbarGroup lastChild={true}>
-            <StateIcon color={get(this, 'context.muiTheme.palette.primary3Color', DEFAULT_COLOR)} icon={<Code />} active={this.props.value} />
-            <StateIcon color={get(this, 'context.muiTheme.palette.primary1Color', DEFAULT_COLOR)} icon={<Report />} active={this.props.isRequired} />
-            <StateIcon color={get(this, 'context.muiTheme.palette.primary2Color', DEFAULT_COLOR)} icon={<List />} active={this.props.isList} />
-            <IconButton touch={true}>
-              <NavigationExpandMoreIcon />
-            </IconButton>
+          <Subheader style={{ alignSelf: 'center' }}>{this.props.type}</Subheader>
+          <ToolbarSeparator style={{ backgroundColor: '#000'}} />
+          <StateIcon color={get(this, 'context.muiTheme.palette.accent1Color', DEFAULT_COLOR)} icon={<Code />} active={this.props.value} />
+          <StateIcon color={get(this, 'context.muiTheme.palette.alert1Color', DEFAULT_COLOR)} icon={<Report />} active={this.props.isRequired} />
+          <StateIcon color={get(this, 'context.muiTheme.palette.secondary1Color', DEFAULT_COLOR)} icon={<List />} active={this.props.isList} />
+          <IconButton touch={true}>
+            <NavigationExpandMoreIcon />
+          </IconButton>
         </ToolbarGroup>
       </Toolbar>
     );

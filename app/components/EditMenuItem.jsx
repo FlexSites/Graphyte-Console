@@ -73,7 +73,6 @@ export default class EditMenuItem extends Component {
         onTouchTap={this.props.onTouchTap}
         style={this.state.style}
         leftAvatar={this.icon}
-        rightIcon={<ActionInfo />}
       />
     )
   }

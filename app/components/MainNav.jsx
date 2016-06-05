@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon';
@@ -10,8 +10,9 @@ import Avatar from 'material-ui/Avatar';
 import { getProfile, getIdToken } from '../lib/auth0';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import { get } from 'object-path';
 
-export default class ToolbarExamplesSimple extends React.Component {
+export default class MainNav extends Component {
 
   constructor(props) {
     super(props);
@@ -21,6 +22,20 @@ export default class ToolbarExamplesSimple extends React.Component {
       isLoggedIn: !!getIdToken(),
       platform: 'flexsites',
     }
+
+    this.getBackgroundColor();
+  }
+
+  componentWillMount() {
+    this.getBackgroundColor();
+  }
+
+  getBackgroundColor() {
+    this.setState({
+      styles: {
+        backgroundColor: get(this, 'context.muiTheme.palette.primary1Color', '#666'),
+      }
+    })
   }
 
   render() {
@@ -30,6 +45,7 @@ export default class ToolbarExamplesSimple extends React.Component {
           <SelectField
             value={this.state.platform}
             style={{alignSelf: 'center'}}
+            floatingLabelText="Platform"
             onChange={() => {}}>
             <MenuItem value={'flexsites'} primaryText="Never" />
             <MenuItem value={2} primaryText="Every Night" />
@@ -50,3 +66,6 @@ export default class ToolbarExamplesSimple extends React.Component {
   }
 }
 
+MainNav.contextTypes = {
+  muiTheme: React.PropTypes.object.isRequired,
+};

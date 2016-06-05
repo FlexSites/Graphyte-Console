@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import uuid from '../lib/uuid'
 
 import List from '../components/List.jsx'
-import { selectEntry, addEntry, entryFilter } from '../actions'
+import { selectEntry, schemaItemAdd, entryFilter } from '../actions'
 
 
 function mapStateToProps(state) {
@@ -21,7 +21,9 @@ function mapDispatchToProps(dispatch) {
       return entryFilter(value);
     },
     selectEntry,
-    addEntry: () => addEntry({ id: uuid() }),
+    addEntry: (entry) => {
+      return schemaItemAdd({ id: uuid(), ...entry })
+    },
   }, dispatch)
 }
 

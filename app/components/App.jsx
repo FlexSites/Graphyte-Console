@@ -11,6 +11,8 @@ import EntryList from '../containers/EntryList';
 import MainNav from '../containers/MainNav'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
+import Save from 'material-ui/svg-icons/content/save';
+import Copy from 'material-ui/svg-icons/content/content-copy';
 import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Snackbar from 'material-ui/Snackbar';
@@ -25,9 +27,11 @@ import MenuItem from 'material-ui/MenuItem';
 import CodeEditor from './CodeEditor.jsx';
 import ResolveEditor from './ResolveEditor.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import Lock, { getIdToken } from '../lib/auth0';
+import { getIdToken, showLogin } from '../lib/auth0';
 import { parse } from 'graphql/language';
-import { orange500, lightGreenA700 } from 'material-ui/styles/colors';
+import {fade} from 'material-ui/utils/colorManipulator';
+import baseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import { yellow700, cyan500, white, darkBlack, fullBlack, grey800, grey900, grey100, grey700, grey500, orange500, lightGreenA700 } from 'material-ui/styles/colors';
 
 import 'brace/theme/tomorrow_night';
 
@@ -42,8 +46,6 @@ class App extends Component {
       entry: this.props.entry,
     }
 
-    this.lock = Lock;
-    this.showLogin = this.lock.show.bind(this.lock)
     this.onEditName = this.onEditName.bind(this);
     this.saveEntry = this.saveEntry.bind(this);
 
@@ -59,16 +61,6 @@ class App extends Component {
     return this.onChange('type', value);
   }
 
-  showLogin() {
-    return this.lock.show({
-      closable: false,
-    }, (err, profile, token) => {
-      if (err) console.error(err);
-      localStorage.profile = profile;
-      localStorage.userToken = token;
-    })
-  }
-
   onEditName(value) {
     this.state.entry.name = value;
     this.setState({
@@ -79,8 +71,22 @@ class App extends Component {
   getChildContext() {
     return {muiTheme: getMuiTheme({
       palette: {
-        primary3Color: orange500,
-        primary2Color: lightGreenA700,
+        primary1Color: fade(grey800, 0.75),
+        primary2Color: grey700,
+        primary3Color: grey500,
+        accent1Color: lightGreenA700,
+        accent2Color: grey900,
+        accent3Color: grey500,
+        textColor: white,
+        alternateTextColor: grey100,
+        canvasColor: fade(grey800, 0.5),
+        borderColor: grey900,
+        disabledColor: fade(darkBlack, 0.3),
+        pickerHeaderColor: grey800,
+        clockCircleColor: fade(darkBlack, 0.07),
+        shadowColor: fullBlack,
+        alert1Color: yellow700,
+        secondary1Color: cyan500,
       }
     })};
   }
@@ -118,13 +124,17 @@ class App extends Component {
 
     let possibleResolves = getFields(this.state.entry);
 
+    if (!getIdToken()) {
+      showLogin();
+    }
+
     return (
       <div style={{ paddingLeft: '256px', height: '100%', position: 'relative' }}>
-        <MainNav login={this.showLogin} />
+        <MainNav login={showLogin} />
 
         <Tabs>
           <Tab label="Definition">
-            <CodeEditor mode="java" onChange={this.handleDefChange} value={this.state.entry.definition} />
+            <CodeEditor mode="java" onChange={this.handleDefChange} value={this.state.entry.definition} height="1000px" />
           </Tab>
           <Tab label="Resolver">
             {(possibleResolves || []).map(({ name, type, isRequired, isList }, idx) => {
@@ -150,14 +160,23 @@ class App extends Component {
           list={this.props.list}
           onSelect={this.props.entrySelect}
            />
+
         <FloatingActionButton
           secondary={true}
-          onTouchTap={this.props.addEntry}
-          style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
-          <ContentAdd />
+          onTouchTap={this.saveEntry}
+          mini={true}
+          iconStyle={{ fill: darkBlack }}
+          style={{ position: 'fixed', bottom: '90px', right: '28px' }}>
+          <Copy />
         </FloatingActionButton>
 
-        <EntryActions saveEntry={this.saveEntry} style={{ position: 'absolute', bottom: 0, right: 0, zIndex: 999, paddingLeft: '256px', width: '100%' }}/>
+        <FloatingActionButton
+          secondary={true}
+          onTouchTap={this.saveEntry}
+          iconStyle={{ fill: darkBlack }}
+          style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
+          <Save />
+        </FloatingActionButton>
       </div>
     )
   }
