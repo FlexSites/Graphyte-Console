@@ -39,9 +39,9 @@ export default class ToolbarExamplesSimple extends React.Component {
           </SelectField>
         </ToolbarGroup>
         <ToolbarGroup>
-          <RaisedButton label={`Sign ${this.state.isLoggedIn ? 'Out' : 'In'}`} primary={true} onTouchTap={this.props.login} />
+          <RaisedButton label={`Sign ${this.state.isLoggedIn ? 'Out' : 'In'}`} secondary={true} onTouchTap={this.props.login} />
           <Avatar
-            src={this.state.profile.picture}
+            src={get(this, 'state.profile.picture')}
             style={{alignSelf: 'center'}}
           />
         </ToolbarGroup>

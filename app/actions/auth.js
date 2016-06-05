@@ -1,3 +1,4 @@
+import { createAction } from 'redux-actions';
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE } from '../constants';
 
 export function requestLogin(creds) {
@@ -9,7 +10,7 @@ export function requestLogin(creds) {
   }
 }
 
-export function receiveLogin(user) {
+export function signIn(user) {
   return {
     type: LOGIN_SUCCESS,
     isFetching: false,

@@ -7,7 +7,6 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { lightGreen700, darkBlack, white, grey400, grey600, grey700, grey800, grey900 } from 'material-ui/styles/colors';
 import App from './containers/App';
-import Lock, { getIdToken } from './lib/auth0';
 
 import reducers from './reducers'
 
@@ -40,8 +39,7 @@ let themeOverrides = {
   // }
 }
 
-// If not logged in, show lock
-if (!getIdToken()) Lock.show();
+
 
 /* eslint-disable react/display-name */ // This is not a react component
 export default (initialState) => {
