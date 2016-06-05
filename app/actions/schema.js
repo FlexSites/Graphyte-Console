@@ -2,9 +2,9 @@ import { createAction } from 'redux-actions'
 
 import Schema from '../services/Schema'
 import {
-  SCHEMA_LIST_PENDING,
-  SCHEMA_LIST_SUCCESS,
-  SCHEMA_LIST_ERROR,
+  ENTRY_LIST_PENDING,
+  ENTRY_LIST_SUCCESS,
+  ENTRY_LIST_ERROR,
   SCHEMA_ITEM_PENDING,
   SCHEMA_ITEM_SUCCESS,
   SCHEMA_ITEM_ERROR,
@@ -14,15 +14,15 @@ import {
   SCHEMA_SAVE_ERROR
 } from '../constants'
 
-export const schemaListPending = createAction(SCHEMA_LIST_PENDING)
+export const schemaListPending = createAction(ENTRY_LIST_PENDING)
 export const schemaListSuccess = (data) => {
   console.log('success', data);
   return {
-    type: SCHEMA_LIST_SUCCESS,
+    type: ENTRY_LIST_SUCCESS,
     payload: data,
   }
 }
-export const schemaListError = createAction(SCHEMA_LIST_ERROR)
+export const schemaListError = createAction(ENTRY_LIST_ERROR)
 
 export const schemaItemPending = createAction(SCHEMA_ITEM_PENDING)
 export const schemaItemSuccess = createAction(SCHEMA_ITEM_SUCCESS)
@@ -32,6 +32,9 @@ export const schemaItemAdd = createAction(SCHEMA_ITEM_ADD)
 export const schemaSavePending = createAction(SCHEMA_SAVE_PENDING)
 export const schemaSaveSuccess = createAction(SCHEMA_SAVE_SUCCESS)
 export const schemaSaveError = createAction(SCHEMA_SAVE_ERROR)
+
+export const entrySelect = createAction('ENTRY_SELECT');
+export const entryFilter = createAction('ENTRY_FILTER');
 
 
 export const fetchSchemaList = () => (dispatch) => {

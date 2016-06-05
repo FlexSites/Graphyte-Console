@@ -30,6 +30,12 @@ export default class EditMenuItem extends Component {
 
   componentWillMount() {
     this.getIcon(this.props.subText);
+
+    this.setState({
+      style: {
+        backgroundColor: this.props.isSelected ? this.backgroundColor : null
+      }
+    });
   }
 
 

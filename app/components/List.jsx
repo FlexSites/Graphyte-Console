@@ -15,43 +15,90 @@ import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 import MenuItem from 'material-ui/MenuItem';
 import { ENTRY_TYPES } from '../constants';
 import SelectField from 'material-ui/SelectField';
+import { get } from 'object-path';
 
 export default class SchemaList extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      entry: {},
+      filteredList: [],
     };
+
+    this.onSelect = this.onSelect.bind(this);
   }
+
+  onSelect(id) {
+    if (!id) return;
+    this.setState({
+      selected: id,
+    });
+    this.props.onSelect(id);
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log('should!!!', nextProps.list.length !== this.props.list.length);
+  //   return nextProps.list.length !== this.props.list.length;
+  // }
+
+  // filter(entryType = 'type', list = []) {
+  //   if (this.state.entryType === entryType) return;
+  //   console.log('filter', entryType, list);
+  //   let filtered = (list || this.props.list).filter(entry => entryType === entry.type);
+  //   console.log('filtered', filtered);
+  //   this.setState({
+  //     entryType,
+  //     filteredList: filtered,
+  //   });
+  //   if (filtered.length) {
+  //     console.log({
+  //       entryType,
+  //       filteredList: filtered,
+  //       selected: filtered[0].id,
+  //     });
+  //     if (filtered[0].id !== this.state.selected) {
+  //       this.props.onSelect(filtered[0].id);
+  //       this.setState({
+  //         selected: filtered[0].id,
+  //       });
+  //     }
+
+  //   }
+  // }
+
+  // componentWillReceiveProps(props) {
+  //   this.filter(this.state.entryType, props.list);
+  // }
 
   render() {
     return (
       <Drawer open={true}>
         <div style={{ padding: '0 15px' }}>
-          <SelectField value={this.state.entry.type} onChange={(...args) => {console.log(args, 'type changed')}} fullWidth={true} floatingLabelText="Entry Type">
+          <SelectField value={this.props.filter} onChange={(e, idx, value) => this.props.entryFilter(value)} fullWidth={true} floatingLabelText="Entry Type">
             {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
           </SelectField>
         </div>
 
         <List>
           {
-            this.props.list.map((item) => {
-              console.log('got stuff', item.name);
-              let style = {};
-              let children = item.name;
-              return (
-                <EditMenuItem
-                  key={item.id}
-                  value={item.name}
-                  subText={item.type}
-                  onTouchTap={() => this.props.onRowClick(item.id)}
-                  onChange={this.props.onEditName}
-                  isSelected={this.props.selected === item.id} />
-              );
-            })
+            this.props.list
+              .filter(entry => entry.type === this.props.filter)
+              .map((item) => {
+                console.log('item selected', item.name, this.props.selected === item.id)
+                return (
+                  <EditMenuItem
+                    key={item.id}
+                    value={item.name}
+                    subText={item.type}
+                    onTouchTap={() => this.onSelect(item.id)}
+                    onChange={this.props.onEditName}
+                    isSelected={this.props.selected === item.id} />
+                )
+              }
+              )
           }
         </List>
+        {this.props.selected}----
       </Drawer>
     )
   }
@@ -62,14 +109,18 @@ SchemaList.contextTypes = {
 };
 
 SchemaList.propTypes = {
+  filter: React.PropTypes.string,
   list: React.PropTypes.array,
-  onRowClick: React.PropTypes.func,
+  onSelect: React.PropTypes.func,
+  entryFilter: React.PropTypes.func,
+  onAdd: React.PropTypes.func,
   selected: React.PropTypes.string,
-  onEditName: React.PropTypes.func,
 };
 
 SchemaList.defaultProps = {
+  filter: 'type',
   list: [],
-  onRowClick: () => {},
-  onEditName: () => {},
+  onSelect: () => {},
+  onAdd: () => {},
+  entryFilter: () => {},
 };

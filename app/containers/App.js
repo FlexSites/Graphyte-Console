@@ -3,23 +3,22 @@ import { connect } from 'react-redux'
 import uuid from '../lib/uuid'
 
 import App from '../components/App.jsx'
-import { fetchSchemaList, saveSchemaItem, fetchSchemaItem, schemaItemAdd } from '../actions'
+import { fetchSchemaList, saveSchemaItem, entrySelect, schemaItemAdd } from '../actions'
 
 
 function mapStateToProps(state) {
   return {
     list: state.schema.list,
-    entry: state.schema.item,
+    entry: (state.schema.list || []).find(entry => entry.id === state.schema.selected) || {},
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchList: fetchSchemaList,
-    selectEntry: fetchSchemaItem,
+    entrySelect: entrySelect,
     saveEntry: saveSchemaItem,
     addEntry: () => schemaItemAdd({ id: uuid() }),
-
   }, dispatch)
 }
 

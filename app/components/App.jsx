@@ -7,7 +7,7 @@ import { get, set } from 'object-path';
 import AceEditor from 'react-ace';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
-import List from './List.jsx';
+import EntryList from '../containers/EntryList';
 import MainNav from '../containers/MainNav'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
@@ -31,19 +31,19 @@ import { orange500, lightGreenA700 } from 'material-ui/styles/colors';
 
 import 'brace/theme/tomorrow_night';
 
-const BLANK_ENTRY = { entry: { type: '', resolve: {}, mock: '' } };
-
 class App extends Component {
 
   constructor(props) {
     super(props)
 
-    this.state = BLANK_ENTRY;
     this.props.fetchList();
+
+    this.state = {
+      entry: this.props.entry,
+    }
 
     this.lock = Lock;
     this.showLogin = this.lock.show.bind(this.lock)
-    this.selectEntry = this.selectEntry.bind(this)
     this.onEditName = this.onEditName.bind(this);
     this.saveEntry = this.saveEntry.bind(this);
 
@@ -57,10 +57,6 @@ class App extends Component {
 
   handleTypeChange(event, index, value) {
     return this.onChange('type', value);
-  }
-
-  selectEntry(id) {
-    this.setState({ entry: this.props.list.find((item) => item.id === id) || BLANK_ENTRY });
   }
 
   showLogin() {
@@ -90,7 +86,6 @@ class App extends Component {
   }
 
   onChange(prop, value) {
-    console.log('on change happeneing', prop, value);
     set(this.state.entry, prop, value);
     this.setState({
       entry: this.state.entry,
@@ -105,6 +100,12 @@ class App extends Component {
     //Extending function defined in step 2.
     // ...
     this.setState({idToken: getIdToken()})
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      entry: props.entry,
+    })
   }
 
   render() {
@@ -145,11 +146,9 @@ class App extends Component {
           </Tab>
         </Tabs>
 
-        <List
-          selected={this.state.entry.id}
+        <EntryList
           list={this.props.list}
-          onRowClick={this.selectEntry}
-          onEditName={this.onEditName}
+          onSelect={this.props.entrySelect}
            />
         <FloatingActionButton
           secondary={true}
@@ -173,11 +172,15 @@ App.propTypes = {
   children: PropTypes.element,
   fetchList: PropTypes.func.isRequired,
   list: PropTypes.array,
+  entry: PropTypes.object,
   addEntry: React.PropTypes.func,
+  entrySelect: React.PropTypes.entrySelect,
 }
 
 App.defaultProps = {
+  entry: { entry: { type: '', resolve: {}, mock: '' } },
   list: [],
+  entrySelect: () => {},
 }
 
 App.displayName = 'App'
