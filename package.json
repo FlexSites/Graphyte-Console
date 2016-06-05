@@ -19,8 +19,7 @@
     "type": "git",
     "url": "git://github.com/"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "axios": "^0.11.1",
     "babel-core": "^6.9.0",
@@ -47,6 +46,7 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "flexboxgrid": "^6.3.0",
     "foreman": "^1.4.1",
+    "graphql": "^0.6.0",
     "html-webpack-plugin": "^2.17.0",
     "immutable": "^3.8.1",
     "istanbul": "^0.4.3",

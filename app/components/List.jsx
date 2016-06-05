@@ -28,34 +28,30 @@ export default class SchemaList extends Component {
   render() {
     return (
       <Drawer open={true}>
-          <AppBar
-            title="Graphyte.io"
-            />
+        <div style={{ padding: '0 15px' }}>
+          <SelectField value={this.state.entry.type} onChange={(...args) => {console.log(args, 'type changed')}} fullWidth={true} floatingLabelText="Entry Type">
+            {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
+          </SelectField>
+        </div>
 
-          <div style={{ padding: '0 15px' }}>
-            <SelectField value={this.state.entry.type} onChange={(...args) => {console.log(args, 'type changed')}} fullWidth={true} floatingLabelText="Entry Type">
-              {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
-            </SelectField>
-          </div>
-
-          <List>
-            {
-              this.props.list.map((item) => {
-                console.log('got stuff', item.name);
-                let style = {};
-                let children = item.name;
-                return (
-                  <EditMenuItem
-                    key={item.id}
-                    value={item.name}
-                    subText={item.type}
-                    onTouchTap={() => this.props.onRowClick(item.id)}
-                    onChange={this.props.onEditName}
-                    isSelected={this.props.selected === item.id} />
-                );
-              })
-            }
-          </List>
+        <List>
+          {
+            this.props.list.map((item) => {
+              console.log('got stuff', item.name);
+              let style = {};
+              let children = item.name;
+              return (
+                <EditMenuItem
+                  key={item.id}
+                  value={item.name}
+                  subText={item.type}
+                  onTouchTap={() => this.props.onRowClick(item.id)}
+                  onChange={this.props.onEditName}
+                  isSelected={this.props.selected === item.id} />
+              );
+            })
+          }
+        </List>
       </Drawer>
     )
   }

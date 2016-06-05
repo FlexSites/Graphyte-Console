@@ -3,7 +3,7 @@
 import React, { Component, PropTypes } from 'react'
 import { Grid, Row, Col } from 'react-flexbox-grid';
 import brace from 'brace';
-import { set } from 'object-path';
+import { get, set } from 'object-path';
 import AceEditor from 'react-ace';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
@@ -22,9 +22,12 @@ import Subheader from 'material-ui/Subheader';
 import EntryActions from './EntryActions.jsx';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MenuItem from 'material-ui/MenuItem';
-import DefinitionEditor from './DefinitionEditor.jsx';
+import CodeEditor from './CodeEditor.jsx';
+import ResolveEditor from './ResolveEditor.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import Lock, { getIdToken } from '../lib/auth0';
+import { parse } from 'graphql/language';
+import { orange500, lightGreenA700 } from 'material-ui/styles/colors';
 
 import 'brace/theme/tomorrow_night';
 
@@ -78,10 +81,16 @@ class App extends Component {
   }
 
   getChildContext() {
-    return {muiTheme: getMuiTheme()};
+    return {muiTheme: getMuiTheme({
+      palette: {
+        primary3Color: orange500,
+        primary2Color: lightGreenA700,
+      }
+    })};
   }
 
   onChange(prop, value) {
+    console.log('on change happeneing', prop, value);
     set(this.state.entry, prop, value);
     this.setState({
       entry: this.state.entry,
@@ -106,17 +115,7 @@ class App extends Component {
 
     let resolves = (this.state.entry.resolve || {})[this.state.entry.name] || {};
 
-    let possibleResolves = (this
-      .state
-      .entry
-      .definition || '')
-      .split('\n')
-      .map(
-        ln => ln
-          .split(/[:(]/)[0]
-          .trim()
-      )
-      .filter(val => !!val);
+    let possibleResolves = getFields(this.state.entry);
 
     return (
       <div style={{ paddingLeft: '256px', height: '100%', position: 'relative' }}>
@@ -124,46 +123,27 @@ class App extends Component {
 
         <Tabs>
           <Tab label="Definition">
-            <DefinitionEditor onChange={this.handleDefChange} value={this.state.entry.definition} />
+            <CodeEditor mode="java" onChange={this.handleDefChange} value={this.state.entry.definition} />
           </Tab>
           <Tab label="Resolver">
-            <Grid fluid={true}>
-              {(possibleResolves || []).map((key, idx) => {
-                return (
-                  <Paper style={paperStyle} zDepth={1} rounded={false} key={key}>
-                    <Toolbar>
-                      <ToolbarGroup>
-                        <ToolbarTitle text={key} />
-                      </ToolbarGroup>
-                      {
-                        resolves[key] ? (<div></div>) : (<ToolbarGroup lastChild={true}>
-                        <IconButton touch={true} onTouchTap={() => this.handleResChange(key, '// stuff')}>
-                          <NavigationExpandMoreIcon />
-                        </IconButton>
-                      </ToolbarGroup>)
-                      }
-                    </Toolbar>
-                    {resolves[key] ? (<AceEditor
-                      mode="javascript"
-                      theme="tomorrow_night"
-                      value={resolves[key]}
-                      onChange={(val) => this.handleResChange(key, val)}
-                      width="100%"
-                      height="200px"
-                      name={`UNIQUE_ID_OF_DIV_${idx}`}
-                      editorProps={{$blockScrolling: true}}
-                    />) : (<div></div>)}
-                  </Paper>
-                );
-              })}
-            </Grid>
+            {(possibleResolves || []).map(({ name, type, isRequired, isList }, idx) => {
+              console.log('right before render method!!!', name, type, isRequired, isList);
+              return (
+                <ResolveEditor
+                  key={idx}
+                  onChange={(val) => this.handleResChange(name, val)}
+                  field={name}
+                  type={type}
+                  value={resolves[name]}
+                  isRequired={isRequired}
+                  isList={isList} />
+              );
+            })}
           </Tab>
           <Tab label="Mock">
             <h1>TODO: Add mock UI</h1>
           </Tab>
         </Tabs>
-
-
 
         <List
           selected={this.state.entry.id}
@@ -203,3 +183,19 @@ App.defaultProps = {
 App.displayName = 'App'
 
 export default App
+
+function getFields({ definition, name }) {
+  if (!definition || !name) return [];
+  let doc;
+  try { doc = parse(`type ${name} { ${definition} }`); }
+  catch(ex) { console.error('Invalid GraphQL', ex); return []; }
+  return get(doc, 'definitions.0.fields', [])
+    .map(({ name, type }) => ({ name: name.value, ...getType(type) }));
+}
+
+function getType(field, isRequired, isList) {
+  let { kind, type, name } = field;
+  if (kind === 'NamedType') return { type: name.value, isRequired, isList };
+  if (kind === 'ListType') return getType(type, isRequired, true);
+  if (kind === 'NonNullType') return getType(type, true, isList);
+}

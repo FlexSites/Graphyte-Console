@@ -31,10 +31,9 @@ let themeOverrides = {
   //   color: grey900
   // },
 
-  // palette: {
-  //   accent1Color: lightGreen700,
-  //   canvasColor: grey700,
-  // },
+  palette: {
+    primary2Color: lightGreen700,
+  },
   // navDrawer: {
   //   color: grey800,
   //   textColor: white
