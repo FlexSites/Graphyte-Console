@@ -40,8 +40,9 @@ module.exports = {
     hot: true,
     proxy: {
       '/api*': {
-        target: 'https://graphyte-console.herokuapp.com',
-        secure: true,
+        target: 'http://localhost:8080',
+        // target: 'https://graphyte-console.herokuapp.com',
+        secure: false,
       },
     },
   },

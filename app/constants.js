@@ -27,6 +27,9 @@ export const SCHEMA_ITEM_ADD = 'SCHEMA_ITEM_ADD'
 export const PUSH_NOTIFICATION = 'PUSH_NOTIFICATION'
 export const POP_NOTIFICATION = 'POP_NOTIFICATION'
 
+export const AUTH_TOKEN = 'YIFJWLW0nB8bOSdctNeNBZ8ffSBD153B';
+export const AUTH_HOST = 'flexhub.auth0.com';
+
 export const ENTRY_TYPES = [
   'Type',
   'Scalar',
