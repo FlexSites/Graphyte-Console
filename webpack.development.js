@@ -29,6 +29,10 @@ module.exports = {
       include: path.join(__dirname, 'app'),
     },
     {
+      test: /\.jpe?g$/,
+      loader: 'file-loader',
+    },
+    {
       test: /\.css$/,
       loader: 'style!css?modules',
       // include: /flexboxgrid/,
