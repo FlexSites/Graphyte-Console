@@ -3,65 +3,60 @@
 import React, { Component, PropTypes } from 'react'
 import { Grid, Row, Col } from 'react-flexbox-grid';
 import brace from 'brace';
-import { set } from 'object-path';
+import { get, set } from 'object-path';
 import AceEditor from 'react-ace';
 import RaisedButton from 'material-ui/RaisedButton';
 import CircularProgress from 'material-ui/CircularProgress';
-import List from './List.jsx';
+import EntryList from '../containers/EntryList';
 import MainNav from '../containers/MainNav'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
 import IconButton from 'material-ui/IconButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Snackbar from 'material-ui/Snackbar';
+import {Tabs, Tab} from 'material-ui/Tabs';
 import Paper from 'material-ui/Paper';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
 import Subheader from 'material-ui/Subheader';
 import EntryActions from './EntryActions.jsx';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import CodeEditor from './CodeEditor.jsx';
+import ResolveEditor from './ResolveEditor.jsx';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import { ENTRY_TYPES } from '../constants';
 import Lock, { getIdToken } from '../lib/auth0';
+import { parse } from 'graphql/language';
+import { orange500, lightGreenA700 } from 'material-ui/styles/colors';
 
 import 'brace/theme/tomorrow_night';
-
-const BLANK_ENTRY = { entry: { type: '', resolve: {}, mock: '' } };
 
 class App extends Component {
 
   constructor(props) {
     super(props)
 
-    this.state = BLANK_ENTRY;
     this.props.fetchList();
+
+    this.state = {
+      entry: this.props.entry,
+    }
 
     this.lock = Lock;
     this.showLogin = this.lock.show.bind(this.lock)
-    this.selectEntry = this.selectEntry.bind(this)
     this.onEditName = this.onEditName.bind(this);
     this.saveEntry = this.saveEntry.bind(this);
 
     this.handleDefChange = this.onChange.bind(this, 'definition');
     this.handleResChange = function (key, value){
-      console.log('handling res change', key, value);
       this.onChange(`resolve.${this.state.entry.name}.${key}`, value);
     }.bind(this);
     this.handleMockChange = this.onChange.bind(this, 'mock');
     this.handleTypeChange = this.handleTypeChange.bind(this);
-
-    console.log(typeof this.handleTypeChange, this.handleTypeChange.toString());
   }
 
   handleTypeChange(event, index, value) {
     return this.onChange('type', value);
-  }
-
-  selectEntry(id) {
-    console.log('select', id);
-    this.setState({ entry: this.props.list.find((item) => item.id === id) || BLANK_ENTRY });
   }
 
   showLogin() {
@@ -75,7 +70,6 @@ class App extends Component {
   }
 
   onEditName(value) {
-    console.log('2setting internal state', value, this.state.entry);
     this.state.entry.name = value;
     this.setState({
       entry: this.state.entry,
@@ -83,7 +77,12 @@ class App extends Component {
   }
 
   getChildContext() {
-    return {muiTheme: getMuiTheme()};
+    return {muiTheme: getMuiTheme({
+      palette: {
+        primary3Color: orange500,
+        primary2Color: lightGreenA700,
+      }
+    })};
   }
 
   onChange(prop, value) {
@@ -103,8 +102,10 @@ class App extends Component {
     this.setState({idToken: getIdToken()})
   }
 
-  componentWillReceiveProps(nextProps) {
-      console.log('props', nextProps);
+  componentWillReceiveProps(props) {
+    this.setState({
+      entry: props.entry,
+    })
   }
 
   render() {
@@ -115,93 +116,39 @@ class App extends Component {
 
     let resolves = (this.state.entry.resolve || {})[this.state.entry.name] || {};
 
-    let possibleResolves = (this
-      .state
-      .entry
-      .definition || '')
-      .split('\n')
-      .map(
-        ln => ln
-          .split(/[:(]/)[0]
-          .trim()
-      )
-      .filter(val => !!val);
+    let possibleResolves = getFields(this.state.entry);
 
-    console.log('stuff and crap', resolves);
-
-    console.log('render', this.props);
     return (
-      <div style={{ paddingLeft: '256px' }}>
+      <div style={{ paddingLeft: '256px', height: '100%', position: 'relative' }}>
         <MainNav login={this.showLogin} />
 
-        <Grid fluid={true}>
-          <Row>
-            <Col xs={6} md={6}>
-              <h4>Type Definitions</h4>
-            </Col>
-            <Col xs={6} md={6}>
-              <SelectField value={this.state.entry.type} onChange={this.handleTypeChange} fullWidth={true} floatingLabelText="Entry Type">
-                {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
-              </SelectField>
-            </Col>
-            <Col xs={12} md={6}>
-              <Paper style={paperStyle} zDepth={1} rounded={false}>
-                <AceEditor
-                  mode="java"
-                  theme="tomorrow_night"
-                  value={this.state.entry.definition}
-                  onChange={this.handleDefChange}
-                  name="UNIQUE_ID_OF_DIV"
-                  width="100%"
-                  editorProps={{$blockScrolling: true}}
-                />
-              </Paper>
-            </Col>
-          </Row>
-          {(possibleResolves || []).map((key, idx) => {
-            return (
-              <Paper style={paperStyle} zDepth={1} rounded={false} key={key}>
-                <Toolbar>
-                  <ToolbarGroup>
-                    <ToolbarTitle text={key} />
-                  </ToolbarGroup>
-                  {
-                    resolves[key] ? (<div></div>) : (<ToolbarGroup lastChild={true}>
-                    <IconButton touch={true} onTouchTap={() => this.handleResChange(key, '// stuff')}>
-                      <NavigationExpandMoreIcon />
-                    </IconButton>
-                  </ToolbarGroup>)
-                  }
-                </Toolbar>
-                {resolves[key] ? (<AceEditor
-                  mode="javascript"
-                  theme="tomorrow_night"
-                  value={resolves[key]}
-                  onChange={(val) => {
-                    console.log('What the butt', key, val);
-                    return this.handleResChange(key, val);
-                  }}
-                  width="100%"
-                  height="200px"
-                  name={`UNIQUE_ID_OF_DIV_${idx}`}
-                  editorProps={{$blockScrolling: true}}
-                />) : (<div></div>)}
-              </Paper>
-            );
-          })}
-          <Row>
-            <Col md={12}>
-              <EntryActions saveEntry={this.saveEntry} />
-            </Col>
-          </Row>
-        </Grid>
+        <Tabs>
+          <Tab label="Definition">
+            <CodeEditor mode="java" onChange={this.handleDefChange} value={this.state.entry.definition} />
+          </Tab>
+          <Tab label="Resolver">
+            {(possibleResolves || []).map(({ name, type, isRequired, isList }, idx) => {
+              console.log('right before render method!!!', name, type, isRequired, isList);
+              return (
+                <ResolveEditor
+                  key={idx}
+                  onChange={(val) => this.handleResChange(name, val)}
+                  field={name}
+                  type={type}
+                  value={resolves[name]}
+                  isRequired={isRequired}
+                  isList={isList} />
+              );
+            })}
+          </Tab>
+          <Tab label="Mock">
+            <h1>TODO: Add mock UI</h1>
+          </Tab>
+        </Tabs>
 
-
-        <List
-          selected={this.state.entry.id}
+        <EntryList
           list={this.props.list}
-          onRowClick={this.selectEntry}
-          onEditName={this.onEditName}
+          onSelect={this.props.entrySelect}
            />
         <FloatingActionButton
           secondary={true}
@@ -209,6 +156,8 @@ class App extends Component {
           style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
           <ContentAdd />
         </FloatingActionButton>
+
+        <EntryActions saveEntry={this.saveEntry} style={{ position: 'absolute', bottom: 0, right: 0, zIndex: 999, paddingLeft: '256px', width: '100%' }}/>
       </div>
     )
   }
@@ -223,13 +172,33 @@ App.propTypes = {
   children: PropTypes.element,
   fetchList: PropTypes.func.isRequired,
   list: PropTypes.array,
+  entry: PropTypes.object,
   addEntry: React.PropTypes.func,
+  entrySelect: React.PropTypes.entrySelect,
 }
 
 App.defaultProps = {
+  entry: { entry: { type: '', resolve: {}, mock: '' } },
   list: [],
+  entrySelect: () => {},
 }
 
 App.displayName = 'App'
 
 export default App
+
+function getFields({ definition, name }) {
+  if (!definition || !name) return [];
+  let doc;
+  try { doc = parse(`type ${name} { ${definition} }`); }
+  catch(ex) { console.error('Invalid GraphQL', ex); return []; }
+  return get(doc, 'definitions.0.fields', [])
+    .map(({ name, type }) => ({ name: name.value, ...getType(type) }));
+}
+
+function getType(field, isRequired, isList) {
+  let { kind, type, name } = field;
+  if (kind === 'NamedType') return { type: name.value, isRequired, isList };
+  if (kind === 'ListType') return getType(type, isRequired, true);
+  if (kind === 'NonNullType') return getType(type, true, isList);
+}

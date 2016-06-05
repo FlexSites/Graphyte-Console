@@ -19,7 +19,7 @@ export default class EntryActions extends Component {
 
   render() {
     return (
-      <Toolbar>
+      <Toolbar style={this.props.style || {}}>
         <ToolbarGroup>
           <RaisedButton label="Save Entry" onTouchTap={this.props.saveEntry} secondary={true} />
         </ToolbarGroup>

@@ -17,6 +17,8 @@ import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 import {fade} from 'material-ui/utils/colorManipulator';
 import { get } from 'object-path';
 
+const DEFAULT_COLOR = '#ccc';
+
 export default class EditMenuItem extends Component {
 
   constructor(props) {
@@ -28,19 +30,25 @@ export default class EditMenuItem extends Component {
 
   componentWillMount() {
     this.getIcon(this.props.subText);
+
+    this.setState({
+      style: {
+        backgroundColor: this.props.isSelected ? this.backgroundColor : null
+      }
+    });
   }
 
 
   getIcon(type) {
     let icon = (<Memory />);
-    let color = get(this, 'context.muiTheme.palette.accent1Color', '#616161');
+    let color = get(this, 'context.muiTheme.palette.accent1Color', DEFAULT_COLOR);
 
     if (type === 'schema') {
       icon = (<HardwareDeveloperBoard />)
-      color = lightGreenA700;
+      color = get(this, 'context.muiTheme.palette.primary2Color', DEFAULT_COLOR);
     } else if (type === 'scalar') {
       icon = (<Blur />)
-      color = orange500;
+      color = get(this, 'context.muiTheme.palette.primary3Color', DEFAULT_COLOR);
     }
 
     this.backgroundColor = fade(color, 0.2)
