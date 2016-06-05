@@ -13,7 +13,12 @@ var config = {
     path: buildPath,
     filename: 'bundle.js',
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'index.tpl.html',
+      inject: 'body',
+    }),
+  ],
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -21,7 +26,7 @@ var config = {
       include: path.join(__dirname, 'app'),
     }, {
       test: /\.css$/,
-      loader: 'style!css',
+      loader: 'style!css?modules',
     }],
   },
 };
