@@ -1,19 +1,25 @@
 var path = require('path');
 var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+
+var port = 80;
 
 module.exports = {
   devtool: 'eval',
   entry: [
-    'webpack-dev-server/client?http://localhost:8080',
+    `webpack-dev-server/client?http://localhost:${port}`,
     'webpack/hot/only-dev-server',
-    './client/app/index',
+    './app/index',
   ],
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
     filename: 'bundle.js',
-    publicPath: '/static/',
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      template: 'index.tpl.html',
+      inject: 'body',
+    }),
     new webpack.HotModuleReplacementPlugin(),
   ],
   module: {
@@ -29,7 +35,14 @@ module.exports = {
     }],
   },
   devServer: {
-    contentBase: './client',
+    port,
+    contentBase: './dist',
     hot: true,
+    proxy: {
+      '/api*': {
+        target: 'https://graphyte-console.herokuapp.com',
+        secure: true,
+      },
+    },
   },
 };

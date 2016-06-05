@@ -1,7 +1,7 @@
 
 
 // export const API_HOST = 'https://4l1z6zc49h.execute-api.us-west-2.amazonaws.com/dev'
-export const API_HOST = ''
+export const API_HOST = '/api'
 
 export const FETCH_SCHEMA_LIST = 'FETCH_SCHEMA_LIST'
 

@@ -35,6 +35,7 @@ export const schemaSaveError = createAction(SCHEMA_SAVE_ERROR)
 
 
 export const fetchSchemaList = () => (dispatch) => {
+  console.log('fetch schema list');
   dispatch(schemaListPending())
   Schema.list()
     .then((data) => dispatch(schemaListSuccess(data)))

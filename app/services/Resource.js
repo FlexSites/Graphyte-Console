@@ -18,6 +18,7 @@ export default class Resource {
   }
 
   list() {
+    console.log('schema list!!!', this.baseUrl);
     return this[_request](this.baseUrl, 'GET')
   }
 
@@ -45,6 +46,7 @@ export default class Resource {
   }
 
   [_request](url, method, data) {
+    console.log('request', url, method, data);
     let start = Date.now();
     let params = {
       method,

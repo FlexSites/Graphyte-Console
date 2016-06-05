@@ -154,7 +154,7 @@ class App extends Component {
               </Col>
               <Col xs={6} md={6}>
                 <SelectField value={this.state.entry.type} onChange={this.handleTypeChange} fullWidth={true} floatingLabelText="Entry Type">
-                  {ENTRY_TYPES.map((type) => (<MenuItem value={type.toLowerCase()} primaryText={type} />))}
+                  {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
                 </SelectField>
               </Col>
               <Col xs={12} md={6}>
@@ -217,13 +217,6 @@ class App extends Component {
           onRowClick={this.selectEntry}
           onEditName={this.onEditName}
            />
-        <Snackbar
-          open={this.state.open}
-          message={this.state.message}
-          action="undo"
-          autoHideDuration={3000}
-          onRequestClose={this.handleRequestClose}
-        />
         <FloatingActionButton
           secondary={true}
           onTouchTap={this.props.addEntry}
