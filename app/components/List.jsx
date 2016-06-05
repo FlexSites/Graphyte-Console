@@ -98,7 +98,6 @@ export default class SchemaList extends Component {
               )
           }
         </List>
-        {this.props.selected}----
       </Drawer>
     )
   }
