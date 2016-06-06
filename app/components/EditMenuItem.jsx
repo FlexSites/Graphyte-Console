@@ -16,6 +16,7 @@ import {blue500, yellow600, orange500, lightGreenA700} from 'material-ui/styles/
 import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 import {fade} from 'material-ui/utils/colorManipulator';
 import { get } from 'object-path';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 
 const DEFAULT_COLOR = '#ccc';
 

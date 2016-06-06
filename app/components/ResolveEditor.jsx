@@ -41,18 +41,15 @@ export default class ResolveEditor extends Component {
       open: false,
     };
 
-    console.log(this.context);
   }
 
   toggle() {
-    console.log(this.state);
     this.setState({
       open: !this.state.open,
     });
   }
 
   render() {
-    console.log('theme', this.context);
     let toolbar = (
       <Toolbar onTouchTap={this.toggle.bind(this)} style={{ cursor: 'pointer', borderBottom: 'solid 1px #000' }}>
         <ToolbarGroup>

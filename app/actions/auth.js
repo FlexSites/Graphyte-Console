@@ -19,6 +19,15 @@ export function signIn(user) {
   }
 }
 
+export function signOut(user) {
+  return {
+    type: LOGIN_SUCCESS,
+    isFetching: false,
+    isAuthenticated: true,
+    id_token: user.id_token
+  }
+}
+
 export function loginError(message) {
   return {
     type: LOGIN_FAILURE,

@@ -1,3 +1,5 @@
+/* global Auth0Lock:false */
+
 import { signIn } from '../actions';
 import { AUTH_TOKEN, AUTH_HOST } from '../constants';
 
@@ -35,11 +37,11 @@ export function getIdToken() {
     }
   }
   if (!idToken) {
-    console.log('[Auth] No token.');
+    console.info('[Auth] No token.');
     return null;
   }
   if (Date.now() > parseInt(JSON.parse(atob(idToken.split('.')[1])).exp) * 1000) {
-    console.log('[Auth] JWT Expired.');
+    console.info('[Auth] JWT Expired.');
     return null;
   }
   return idToken;

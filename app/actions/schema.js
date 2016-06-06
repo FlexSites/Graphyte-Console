@@ -16,7 +16,6 @@ import {
 
 export const schemaListPending = createAction(ENTRY_LIST_PENDING)
 export const schemaListSuccess = (data) => {
-  console.log('success', data);
   return {
     type: ENTRY_LIST_SUCCESS,
     payload: data,
@@ -37,15 +36,14 @@ export const entrySelect = createAction('ENTRY_SELECT');
 export const entryFilter = createAction('ENTRY_FILTER');
 
 
-export const fetchSchemaList = () => (dispatch) => {
-  console.log('fetch schema list');
+export const fetchEntryList = () => (dispatch) => {
   dispatch(schemaListPending())
   Schema.list()
     .then((data) => dispatch(schemaListSuccess(data)))
     .catch((ex) => dispatch(schemaListError(ex)))
 }
 
-export const saveSchemaItem = (entry) => (dispatch) => {
+export const saveEntry = (entry) => (dispatch) => {
   dispatch(schemaSavePending(entry))
   Schema.update(entry)
     .then((data) => dispatch(schemaSaveSuccess(data)))

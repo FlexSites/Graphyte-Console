@@ -1,29 +1,19 @@
-import React, { Component } from 'react';
-import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import RaisedButton from 'material-ui/RaisedButton';
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import Avatar from 'material-ui/Avatar';
-import { getProfile, getIdToken } from '../lib/auth0';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import React, { PropTypes, Component } from 'react';
+
+// Material UI
+import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
+
+// Libs
 import { get } from 'object-path';
+
+// Smart Components
+import PlatformSelect from '../containers/PlatformSelect';
+import UserWidget from '../containers/UserWidget';
 
 export default class MainNav extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      profile: getProfile(),
-      isLoggedIn: !!getIdToken(),
-      platform: 'flexsites',
-    }
-
-    this.getBackgroundColor();
   }
 
   componentWillMount() {
@@ -33,7 +23,7 @@ export default class MainNav extends Component {
   getBackgroundColor() {
     this.setState({
       styles: {
-        backgroundColor: get(this, 'context.muiTheme.palette.primary1Color', '#666'),
+        backgroundColor: get(this, 'context.muiTheme.palette.primary1Color', '#f00'),
       }
     })
   }
@@ -42,24 +32,10 @@ export default class MainNav extends Component {
     return (
       <Toolbar>
         <ToolbarGroup>
-          <SelectField
-            value={this.state.platform}
-            style={{alignSelf: 'center'}}
-            floatingLabelText="Platform"
-            onChange={() => {}}>
-            <MenuItem value={'flexsites'} primaryText="Never" />
-            <MenuItem value={2} primaryText="Every Night" />
-            <MenuItem value={3} primaryText="Weeknights" />
-            <MenuItem value={4} primaryText="Weekends" />
-            <MenuItem value={5} primaryText="Weekly" />
-          </SelectField>
+          <PlatformSelect />
         </ToolbarGroup>
         <ToolbarGroup>
-          <RaisedButton label={`Sign ${this.state.isLoggedIn ? 'Out' : 'In'}`} secondary={true} onTouchTap={this.props.login} />
-          <Avatar
-            src={get(this, 'state.profile.picture')}
-            style={{alignSelf: 'center'}}
-          />
+          <UserWidget />
         </ToolbarGroup>
       </Toolbar>
     );
@@ -67,5 +43,5 @@ export default class MainNav extends Component {
 }
 
 MainNav.contextTypes = {
-  muiTheme: React.PropTypes.object.isRequired,
+  muiTheme:PropTypes.object.isRequired,
 };

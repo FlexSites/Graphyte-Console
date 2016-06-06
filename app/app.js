@@ -3,15 +3,13 @@ import { Provider } from 'react-redux'
 import { Router, browserHistory } from 'react-router'
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux'
 import injectTapEventPlugin from 'react-tap-event-plugin'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import { lightGreen700, darkBlack, white, grey400, grey600, grey700, grey800, grey900 } from 'material-ui/styles/colors';
-import App from './containers/App';
+// import muiTheme from './services/Theme';
+import App from './components/App.jsx';
 
 import reducers from './reducers'
 
 import { configureStore } from './lib/store'
-import routes from './routes'
 import './global.css'
 
 // Redux Middleware
@@ -23,23 +21,7 @@ injectTapEventPlugin()
 const middleware = [
   thunk,
   routerMiddleware(browserHistory)
-]
-
-let themeOverrides = {
-  // appBar: {
-  //   color: grey900
-  // },
-
-  palette: {
-    primary2Color: lightGreen700,
-  },
-  // navDrawer: {
-  //   color: grey800,
-  //   textColor: white
-  // }
-}
-
-
+];
 
 /* eslint-disable react/display-name */ // This is not a react component
 export default (initialState) => {
@@ -48,9 +30,7 @@ export default (initialState) => {
 
   return (
     <Provider store={store}>
-      <MuiThemeProvider muiTheme={getMuiTheme(themeOverrides)}>
-        <App style={{ backgroundColor: grey700 }} />
-      </MuiThemeProvider>
+      <App />
     </Provider>
   )
 }
