@@ -9,21 +9,31 @@ vendor = Object.keys(vendor);
 var config = {
 
   // We change to normal source mapping
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
   entry: {
     app: './app/index',
     vendor,
   },
   output: {
     path: buildPath,
-    filename: '[name].js',
+    filename: '[name]-[chunkhash].js',
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+      },
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+      },
+    }),
     new HtmlWebpackPlugin({
       template: 'index.tpl.html',
       inject: 'body',
     }),
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor-[chunkhash].js'),
   ],
   module: {
     loaders: [{
