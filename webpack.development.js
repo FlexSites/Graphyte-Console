@@ -1,19 +1,22 @@
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var vendor = require('./package.json').dependencies;
 
+vendor = Object.keys(vendor);
 var port = 80;
 
 module.exports = {
   devtool: 'eval',
-  entry: [
-    `webpack-dev-server/client?http://localhost:${port}`,
-    'webpack/hot/only-dev-server',
-    './app/index',
-  ],
+  entry: {
+    devServer: `webpack-dev-server/client?http://localhost:${port}`,
+    hotReload: 'webpack/hot/only-dev-server',
+    app: './app/index',
+    vendor,
+  },
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
-    filename: 'bundle.js',
+    filename: '[name].js',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -21,6 +24,7 @@ module.exports = {
       inject: 'body',
     }),
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
   ],
   module: {
     loaders: [{
@@ -42,6 +46,7 @@ module.exports = {
     port,
     contentBase: './dist',
     hot: true,
+    historyApiFallback: true,
     proxy: {
       '/api*': {
         target: 'http://localhost:8080',
