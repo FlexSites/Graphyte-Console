@@ -1,38 +1,24 @@
 import { createAction } from 'redux-actions';
-import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE } from '../constants';
+import { SIGN_IN, SIGN_OUT } from '../constants';
+import { push } from 'react-router-redux';
 
-export function requestLogin(creds) {
-  return {
-    type: LOGIN_REQUEST,
-    isFetching: true,
-    isAuthenticated: false,
-    creds
-  }
+export const signIn = ({ profile, token, returnTo = '/' }) => (dispatch) => {
+  localStorage.setItem('profile', JSON.stringify(profile));
+  localStorage.setItem('userToken', token);
+  dispatch(signInSuccess({ profile, token }));
+  dispatch(push(returnTo));
 }
 
-export function signIn(user) {
-  return {
-    type: LOGIN_SUCCESS,
-    isFetching: false,
-    isAuthenticated: true,
-    id_token: user.id_token
-  }
+export const signOut = () => (dispatch) => {
+  localStorage.removeItem('profile');
+  localStorage.removeItem('userToken');
+  dispatch(signOutSuccess());
+  dispatch(push('/'))
 }
 
-export function signOut(user) {
-  return {
-    type: LOGIN_SUCCESS,
-    isFetching: false,
-    isAuthenticated: true,
-    id_token: user.id_token
-  }
-}
+export const signInSuccess = createAction(SIGN_IN);
 
-export function loginError(message) {
-  return {
-    type: LOGIN_FAILURE,
-    isFetching: false,
-    isAuthenticated: false,
-    message
-  }
-}
+export const signOutSuccess = createAction(SIGN_OUT, () => {
+  console.log('called signout successJ!!!!!');
+  return {};
+});

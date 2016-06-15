@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 
 // Connect
 import { connect } from 'react-redux'
-import { fetchSchemaEntry, saveEntry } from '../actions'
+import { bindActionCreators } from 'redux'
+import { removeEntry, fetchSchemaEntry, saveEntry, pushNotification } from '../actions'
 
 // Libs
 import brace from 'brace';
@@ -18,6 +19,7 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Save from 'material-ui/svg-icons/content/save';
 import Copy from 'material-ui/svg-icons/content/content-copy';
+import Delete from 'material-ui/svg-icons/action/delete';
 import { yellow700, cyan500, white, darkBlack, fullBlack, grey800, grey900, grey100, grey700, grey500, orange500, green500 } from 'material-ui/styles/colors';
 
 // Components
@@ -35,6 +37,7 @@ export class EntryEditor extends Component {
     };
 
     this.saveEntry = this.saveEntry.bind(this);
+    this.removeEntry = this.removeEntry.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
 
     this.handleDefChange = this.onChange.bind(this, 'definition');
@@ -46,7 +49,7 @@ export class EntryEditor extends Component {
 
   handleTabChange(value) {
     if (this.state.currentTab === 'definition' && value === 'resolver') {
-      let possibleResolves = getFields(this.state.entry);
+      let possibleResolves = getFields(this.state.entry, this.props.notify);
       if (!possibleResolves.length) return;
       this.setState({
         possibleResolves,
@@ -62,6 +65,10 @@ export class EntryEditor extends Component {
     this.setState({
       entry: this.state.entry,
     })
+  }
+
+  removeEntry() {
+    this.props.removeEntry(this.state.entry);
   }
 
   saveEntry() {
@@ -103,6 +110,15 @@ export class EntryEditor extends Component {
 
         <FloatingActionButton
           secondary={true}
+          onTouchTap={this.removeEntry}
+          mini={true}
+          iconStyle={{ fill: darkBlack }}
+          style={{ position: 'fixed', bottom: '142px', right: '28px' }}>
+          <Delete />
+        </FloatingActionButton>
+
+        <FloatingActionButton
+          secondary={true}
           onTouchTap={this.saveEntry}
           mini={true}
           iconStyle={{ fill: darkBlack }}
@@ -126,20 +142,25 @@ EntryEditor.propTypes = {
   entry: React.PropTypes.object,
   fetchEntry: React.PropTypes.func,
   saveEntry: React.PropTypes.func,
+  removeEntry: React.PropTypes.func,
 };
 
 EntryEditor.defaultProps = {
   list: {},
   fetchEntry: () => {},
   saveEntry: () => {},
+  removeEntry: () => {},
 };
 
 
-function getFields({ definition, name }) {
+function getFields({ definition, name }, notify) {
   if (!definition || !name) return [];
   let doc;
   try { doc = parse(`type ${name} { ${definition} }`); }
-  catch(ex) { console.error('Invalid GraphQL', ex); return []; }
+  catch(ex) {
+    notify({ message: 'Invalid GraphQL' });
+    console.error('Invalid GraphQL', ex); return [];
+  }
   return get(doc, 'definitions.0.fields', [])
     .map(({ name, type }) => ({ name: name.value, ...getType(type) }));
 }
@@ -154,14 +175,18 @@ function getType(field, isRequired, isList) {
 
 
 function mapStateToProps(state) {
-  return { entry: (state.schema.list || []).find(entry => entry.id === state.schema.selected) || {}, }
+  return {
+    entry: (state.schema.list || []).find(entry => entry.id === state.schema.selected) || {},
+  }
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    fetchEntry: (id) => dispatch(fetchSchemaEntry(id)),
-    saveEntry: (id) => dispatch(saveEntry(id))
-  }
+  return bindActionCreators({
+    notify: pushNotification,
+    fetchEntry: fetchSchemaEntry,
+    saveEntry: saveEntry,
+    removeEntry: removeEntry,
+  }, dispatch);
 }
 
 export default connect(

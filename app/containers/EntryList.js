@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { ENTRY_TYPES } from '../constants';
-import { fetchEntryList, entrySelect, schemaItemAdd, entryFilter } from '../actions'
+import { pushNotification, fetchEntryList, entrySelect, schemaItemAdd, entryFilter } from '../actions'
 
 // Libs
 import uuid from '../lib/uuid'
@@ -20,6 +20,7 @@ import TextField from 'material-ui/TextField';
 import { blue500, yellow600, lightGreen300, white } from 'material-ui/styles/colors'
 import { List } from 'material-ui/List';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
+import NewEntryButton from './NewEntry';
 
 import EditMenuItem from '../components/EditMenuItem.jsx';
 
@@ -33,32 +34,13 @@ export default class EntryList extends Component {
     };
 
     this.onSelect = this.onSelect.bind(this);
-    this.handleNewEntryUpdate = this.handleNewEntryUpdate.bind(this);
-    this.toggleNewEntryDialog = this.toggleNewEntryDialog.bind(this);
-
-    this.addEntry = this.addEntry.bind(this);
   }
 
   shouldComponentUpdate(props, state) {
-    return props.filter !== this.props.filter || props.selected !== this.props.selected;
+    return props.filter !== this.props.filter
+      || props.selected !== this.props.selected
+      || props.list.length !== this.props.list.length
   }
-
-  handleNewEntryUpdate(value) {
-    this.setState({
-      newEntryName: value
-    });
-  }
-
-  addEntry() {
-    this.toggleNewEntryDialog();
-    this.props.addEntry({ name: this.state.newEntryName, type: this.props.filter });
-  }
-
-  toggleNewEntryDialog() {
-    this.setState({
-      open: !this.state.open
-    });
-  };
 
   componentWillMount() {
     this.props.fetchList();
@@ -73,26 +55,14 @@ export default class EntryList extends Component {
   }
 
   render() {
-    const actions = [
-      <RaisedButton
-        label="Create"
-        secondary={true}
-        keyboardFocused={true}
-        onTouchTap={this.addEntry}
-      />,
-    ]
+
+    let drawerStyle = {
+      top: '56px',
+      height: 'calc(100% - 56px)',
+    };
 
     return (
-      <Drawer open={true}>
-
-        <Toolbar style={this.state.styles} >
-          <ToolbarGroup>
-            <ToolbarTitle text="Graphyte" />
-          </ToolbarGroup>
-          <ToolbarGroup>
-            <RaisedButton onTouchTap={this.toggleNewEntryDialog} icon={<ContentAdd />} secondary={true} style={{ minWidth: '40px' }} />
-          </ToolbarGroup>
-        </Toolbar>
+      <Drawer open={true} containerStyle={drawerStyle}>
         <div style={{ padding: '0 15px' }}>
           <SelectField value={this.props.filter} onChange={(e, idx, value) => this.props.entryFilter(value)} fullWidth={true} floatingLabelText="Entry Type">
             {ENTRY_TYPES.map((type) => (<MenuItem key={type} value={type.toLowerCase()} primaryText={type} />))}
@@ -117,16 +87,7 @@ export default class EntryList extends Component {
               )
           }
         </List>
-          <Dialog
-            title="New Entry"
-            actions={actions}
-            modal={false}
-            open={this.state.open}
-            onRequestClose={this.toggleNewEntryDialog}
-            contentStyle={{ maxWidth: '300px' }}
-          >
-            <TextField floatingLabelText="Name" onChange={(e) => this.handleNewEntryUpdate(e.target.value)} />
-          </Dialog>
+        <NewEntryButton style={{ margin: '10px', width: 'calc(100% - 20px)' }} />
       </Drawer>
     )
   }
@@ -141,16 +102,16 @@ EntryList.propTypes = {
   list: React.PropTypes.array,
   onSelect: React.PropTypes.func,
   entryFilter: React.PropTypes.func,
-  addEntry: React.PropTypes.func,
   selected: React.PropTypes.string,
+  notify: React.PropTypes.func,
 };
 
 EntryList.defaultProps = {
   filter: 'type',
   list: [],
   onSelect: () => {},
-  addEntry: () => {},
   entryFilter: () => {},
+  notify: () => {},
 };
 
 
@@ -165,9 +126,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     entryFilter,
+    notify: pushNotification,
     onSelect: entrySelect,
     fetchList: fetchEntryList,
-    addEntry: (entry) => schemaItemAdd({ id: uuid(), ...entry }),
   }, dispatch)
 }
 

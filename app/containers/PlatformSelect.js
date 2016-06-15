@@ -29,8 +29,7 @@ export class PlatformSelect extends Component {
     return (
       <SelectField
         value={this.props.selected}
-        style={{alignSelf: 'center'}}
-        floatingLabelText="Platform"
+        style={{ alignSelf: 'center', textAlign: 'right' }}
         onChange={(e, idx, value) => this.props.onSelect(value)}>
         {this.props.list.map(({ id, name }) => {
           return <MenuItem key={id} value={id} primaryText={name} />

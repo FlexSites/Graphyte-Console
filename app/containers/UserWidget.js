@@ -4,15 +4,19 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { signIn, signOut } from '../actions';
+import { isAuthenticated } from '../reducers/selectors'
 
 // Material UI
 import FlatButton from 'material-ui/FlatButton';
 import Avatar from 'material-ui/Avatar';
 import Person from 'material-ui/svg-icons/social/person';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import IconButton from 'material-ui/IconButton/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 // Libs
-import { getProfile, getIdToken } from '../lib/auth0';
 import { get } from 'object-path';
 
 
@@ -20,35 +24,32 @@ export default class MainNav extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      profile: getProfile(),
-      isLoggedIn: !!getIdToken(),
-    }
   }
 
   render() {
-    let signIn = (<FlatButton label="Sign In" secondary={true} onTouchTap={this.props.signIn} />)
-    let signOut = (<FlatButton label="Sign Out" secondary={true} onTouchTap={this.props.signOut} />)
 
     let avatarProps = {
-      src: get(this, 'state.profile.picture'),
-      style: { marginLeft: '10px', alignSelf: 'center' },
+      src: get(this, 'props.profile.picture'),
       icon: (<Person />)
     };
 
     return (
-      <div style={{ alignSelf: 'center', display: 'flex' }}>
-        { this.state.isLoggedIn ? signOut : signIn }
-        <Avatar {...avatarProps} />
-      </div>
+      <IconMenu
+        iconButtonElement={<IconButton style={{ padding: 0 }}><Avatar {...avatarProps} /></IconButton>}
+        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+        targetOrigin={{horizontal: 'right', vertical: 'top'}}
+        style={{ margin: '4px' }}
+      >
+        <MenuItem primaryText="Sign out" onTouchTap={this.props.signOut} />
+      </IconMenu>
     );
   }
 }
 
 function mapStateToProps(state) {
   return {
-
+    profile: state.auth.profile,
+    isAuthenticated: isAuthenticated(state),
   }
 }
 

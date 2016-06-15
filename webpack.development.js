@@ -37,6 +37,10 @@ module.exports = {
       loader: 'file-loader',
     },
     {
+      test: /\.svg$/,
+      loader: 'file-loader',
+    },
+    {
       test: /\.css$/,
       loader: 'style!css?modules',
       // include: /flexboxgrid/,

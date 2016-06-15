@@ -1,14 +1,14 @@
 
-export default function (state = { token: '', profile: {} }, action) {
+export default function (state = { token: '', profile: {}, returnTo: '/' }, action) {
   switch (action.type) {
-    case 'LOGIN_SUCCESS':
+    case 'SIGN_IN':
       let { token, profile } = action.payload;
-      localStorage.profile = JSON.stringify(profile);
-      localStorage.userToken = token;
       return {
         token,
         profile,
       };
+    case 'SIGN_OUT':
+      return {};
   }
   return state
 }

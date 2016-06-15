@@ -4,9 +4,8 @@ import React, { Component, PropTypes } from 'react'
 import muiTheme from '../services/Theme';
 
 // Containers
-import EntryEditor from '../containers/EntryEditor';
-import EntryList from '../containers/EntryList';
 import MainNav from '../components/MainNav.jsx'
+import Notifier from '../containers/Notifier';
 
 export default class App extends Component {
   getChildContext() {
@@ -15,10 +14,10 @@ export default class App extends Component {
 
   render() {
     return (
-      <div style={{ paddingLeft: '256px', height: '100%', position: 'relative' }}>
+      <div>
         <MainNav />
-        <EntryEditor />
-        <EntryList />
+        {this.props.children}
+        <Notifier />
       </div>
     )
   }

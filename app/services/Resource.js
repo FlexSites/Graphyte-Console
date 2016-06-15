@@ -36,8 +36,8 @@ export default class Resource {
     return this[_request](path, 'PUT', obj)
   }
 
-  delete(id) {
-    return this[_request](`${this.baseUrl}/${id}`, 'GET')
+  remove(id) {
+    return this[_request](`${this.baseUrl}/${id}`, 'DELETE')
   }
 
   [_errMessage](msg) {
