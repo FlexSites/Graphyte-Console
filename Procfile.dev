@@ -1,2 +1,0 @@
-client: node client/server
-server: node server/index
