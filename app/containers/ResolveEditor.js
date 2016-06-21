@@ -3,8 +3,7 @@ import React, { Component } from 'react'
 // Connect
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { updateEntry, removeEntry, fetchEntryList, persistEntry, pushNotification } from '../actions'
-import { push } from 'react-router-redux';
+import { updateEntry, removeEntry, fetchSchemaEntry, persistEntry, pushNotification } from '../actions'
 
 // Libs
 import brace from 'brace';
@@ -27,8 +26,10 @@ import { yellow700, cyan500, white, darkBlack, fullBlack, grey800, grey900, grey
 
 // Components
 import CodeEditor from '../components/CodeEditor.jsx';
+import ResolveEditor from '../components/ResolveEditor.jsx';
 import FloatingMenu from '../containers/FloatingMenu';
-import EntryList from '../containers/EntryList';
+import MockEditor from '../containers/MockEditor';
+import DefinitionEditor from '../containers/DefinitionEditor';
 
 export class EntryEditor extends Component {
   constructor(props) {
@@ -36,32 +37,12 @@ export class EntryEditor extends Component {
 
     this.state = {
       entry: {},
-      possibleResolves: [],
-      currentTab: 'definition',
+      possible: getFields(this.props.entry, this.props.notify) || [],
     };
 
-    this.persistEntry = this.persistEntry.bind(this);
-    this.removeEntry = this.removeEntry.bind(this);
-    this.handleTabChange = this.handleTabChange.bind(this);
-
-    this.handleDefChange = this.onChange.bind(this, 'definition');
     this.handleResChange = function (key, value){
       this.onChange(`resolve.${this.state.entry.name}.${key}`, value);
     }.bind(this);
-    this.handleMockChange = this.onChange.bind(this, 'mock');
-  }
-
-  handleTabChange(value) {
-    if (this.state.currentTab === 'definition' && value === 'resolver') {
-      let possibleResolves = getFields(this.state.entry, this.props.notify);
-      if (!possibleResolves.length) return;
-      this.setState({
-        possibleResolves,
-      });
-    }
-    this.setState({
-      currentTab: value,
-    });
   }
 
   onChange(prop, value) {
@@ -69,57 +50,34 @@ export class EntryEditor extends Component {
     set(newEntry, prop, value);
     set(newEntry, 'modified', true);
     this.props.updateEntry(newEntry);
-    console.log('on change', newEntry);
     this.setState({
       entry: newEntry,
     })
   }
 
-  removeEntry() {
-    this.props.removeEntry(this.state.entry);
-  }
-
-  persistEntry() {
-    this.props.persistEntry(this.state.entry);
-  }
-
-  componentWillMount() {
-    this.props.fetchList();
-  }
-
   componentWillReceiveProps(props) {
+    console.log('will', props);
     this.setState({
-      entry: props.entry,
+      possible: getFields(props.entry, this.props.notify) || [],
     })
-  }
-
-  isActive(tab) {
-    let parts = this.props.location.pathname.split('/');
-    if (!tab && parts.length !== 4) return true;
-    return tab === parts[parts.length - 1];
   }
 
   render() {
     let resolves = get(this.state.entry, ['resolve', this.state.entry.name], {});
     return (
-      <div style={{ display: 'flex' }}>
-        <FloatingMenu />
-        <EntryList />
-        <div style={{ width: '100%' }}>
-          <Toolbar style={{ backgroundColor: get(this, 'context.muiTheme.palette.accent1Color') }}>
-            <ToolbarGroup firstChild={true}>
-              <ToolbarTitle text={this.state.entry.name} style={{ fontWeight: '100', marginLeft: '10px' }} />
-            </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <div style={{ alignSelf: 'center' }}>
-                <FlatButton icon={<Definition />} label="Definition" primary={!this.isActive()} onTouchTap={() => this.props.push(`/edit/${this.state.entry.id}`)}/>
-                <FlatButton icon={<Cloud />} label="Resolver" primary={!this.isActive('resolve')} onTouchTap={() => this.props.push(`/edit/${this.state.entry.id}/resolve`)}/>
-                <FlatButton icon={<FlipToBack />} label="Mock" primary={!this.isActive('mock')} onTouchTap={() => this.props.push(`/edit/${this.state.entry.id}/mock`)}/>
-              </div>
-            </ToolbarGroup>
-          </Toolbar>
-          {this.props.children}
-        </div>
+      <div>
+        {(this.state.possible).map(({ name, type, isRequired, isList }, idx) => {
+          return (
+            <ResolveEditor
+              key={idx}
+              onChange={(val) => this.handleResChange(name, val)}
+              field={name}
+              type={type}
+              value={resolves[name]}
+              isRequired={isRequired}
+              isList={isList} />
+          );
+        })}
       </div>
     )
   }
@@ -127,9 +85,6 @@ export class EntryEditor extends Component {
 
 EntryEditor.propTypes = {
   entry: React.PropTypes.object,
-  fetchEntry: React.PropTypes.func,
-  persistEntry: React.PropTypes.func,
-  removeEntry: React.PropTypes.func,
   updateEntry: React.PropTypes.func,
 };
 
@@ -173,12 +128,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
+    updateEntry: (resolver) => updateEntry({ resolver }),
     notify: pushNotification,
-    persistEntry: persistEntry,
-    removeEntry: removeEntry,
-    fetchList: fetchEntryList,
-    push,
-    updateEntry,
   }, dispatch);
 }
 

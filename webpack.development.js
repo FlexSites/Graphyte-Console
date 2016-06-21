@@ -4,7 +4,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var vendor = require('./package.json').dependencies;
 
 vendor = Object.keys(vendor);
-var port = 80;
+var port = process.env.PORT || 8080;
 
 module.exports = {
   devtool: 'eval',
@@ -16,7 +16,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
-    filename: '[name].js',
+    filename: '/[name].js',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -24,7 +24,7 @@ module.exports = {
       inject: 'body',
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendor', '/vendor.bundle.js'),
   ],
   module: {
     loaders: [{
@@ -53,7 +53,7 @@ module.exports = {
     historyApiFallback: true,
     proxy: {
       '/api*': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:5100',
         // target: 'https://graphyte-console.herokuapp.com',
         secure: false,
       },

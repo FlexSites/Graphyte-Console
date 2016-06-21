@@ -17,6 +17,7 @@ import {
   ENTRY_FILTER,
   ENTRY_SELECT,
   ENTRY_REMOVE,
+  UPDATE_ENTRY,
 } from '../constants'
 
 export const schemaListPending = createAction(ENTRY_LIST_PENDING)
@@ -89,7 +90,10 @@ export const fetchEntryList = () => (dispatch) => {
     .catch((ex) => dispatch(schemaListError(ex)))
 }
 
-export const saveEntry = (entry) => (dispatch) => {
+export const updateEntry = createAction(UPDATE_ENTRY);
+
+export const persistEntry = (entry) => (dispatch) => {
+  delete entry.modified;
   dispatch(schemaSavePending(entry))
   Schema.update(entry)
     .then((data) => dispatch(schemaSaveSuccess(data)))

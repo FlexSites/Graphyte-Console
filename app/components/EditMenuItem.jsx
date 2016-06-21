@@ -67,13 +67,21 @@ export default class EditMenuItem extends Component {
   }
 
   render() {
+    let textNode = (<span style={{ fontWeight: 'bold', fontSize: '11px' }}>{this.props.subText.toUpperCase()}</span>);
+
+    let props = {
+      primaryText: this.props.value,
+      secondaryText: textNode,
+      onTouchTap: this.props.onTouchTap,
+      style: this.state.style,
+      leftAvatar: this.icon,
+    };
+
+    if (this.props.modified) props.rightIcon = (<ActionInfo style={{ fill: get(this, 'context.muiTheme.palette.alert1Color') }} />);
+
     return (
       <ListItem
-        primaryText={this.props.value}
-        secondaryText={this.props.subText}
-        onTouchTap={this.props.onTouchTap}
-        style={this.state.style}
-        leftAvatar={this.icon}
+        {...props}
       />
     )
   }

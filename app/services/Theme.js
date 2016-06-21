@@ -2,7 +2,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import {fade} from 'material-ui/utils/colorManipulator';
 import { yellow700, cyan500, white, darkBlack, fullBlack, grey800, grey900, grey100, grey700, grey500, orange500, green500 } from 'material-ui/styles/colors';
 
-export default getMuiTheme({
+let theme = getMuiTheme({
   palette: {
     primary1Color: fade(grey800, 0.9),
     primary2Color: grey700,
@@ -22,3 +22,7 @@ export default getMuiTheme({
     secondary1Color: cyan500,
   }
 });
+
+theme.listItem.secondaryTextColor = '#777';
+
+export default theme;

@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import Paper from 'material-ui/Paper';
 import AceEditor from 'react-ace';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
@@ -17,18 +16,16 @@ export default class DefinitionEditor extends Component {
 
   render() {
     return (
-      <Paper zDepth={1} rounded={false}>
-        <AceEditor
-          mode={this.props.mode}
-          theme="tomorrow_night"
-          value={this.props.value}
-          onChange={this.props.onChange}
-          name={this.state.name}
-          height={this.props.height}
-          width="100%"
-          editorProps={{$blockScrolling: true}}
-        />
-      </Paper>
+      <AceEditor
+        mode={this.props.mode}
+        theme="tomorrow_night"
+        value={this.props.value}
+        onChange={this.props.onChange}
+        name={this.state.name}
+        height={this.props.height}
+        width="100%"
+        editorProps={{$blockScrolling: true}}
+      />
     );
   }
 }
