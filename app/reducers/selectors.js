@@ -5,5 +5,5 @@ const tokenSelector = state => state.auth.token
 
 export const isAuthenticated = createSelector(
   tokenSelector,
-  isTokenValid,
+  isTokenValid
 );

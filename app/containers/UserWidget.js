@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 
 // Connect
 import { connect } from 'react-redux'
@@ -7,14 +7,11 @@ import { signIn, signOut } from '../actions';
 import { isAuthenticated } from '../reducers/selectors'
 
 // Material UI
-import FlatButton from 'material-ui/FlatButton';
 import Avatar from 'material-ui/Avatar';
 import Person from 'material-ui/svg-icons/social/person';
-import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 // Libs
 import { get } from 'object-path';
@@ -30,7 +27,7 @@ export default class MainNav extends Component {
 
     let avatarProps = {
       src: get(this, 'props.profile.picture'),
-      icon: (<Person />)
+      icon: (<Person />),
     };
 
     return (

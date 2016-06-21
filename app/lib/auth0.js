@@ -1,16 +1,15 @@
 /* global Auth0Lock:false */
 
-import { signIn } from '../actions';
 import { AUTH_TOKEN, AUTH_HOST } from '../constants';
-import Bluebird from 'bluebird';
 
 const Lock = new Auth0Lock(AUTH_TOKEN, AUTH_HOST);
 
 export default Lock;
 
 export function getProfile() {
-  try { return JSON.parse(localStorage.getItem('profile')); }
-  catch(ex) {}
+  try {
+    return JSON.parse(localStorage.getItem('profile'));
+  } catch (ex) { console.error('Cannot retrieve profile', ex) }
   return {};
 }
 
@@ -20,14 +19,14 @@ export function isAuthenticated() {
 
 export const authenticated = (...args) => {
   if (args.length === 3) args.unshift({});
-  let [ prevState, nextState, replace, callback ] = args;
+  let [ , nextState, replace ] = args;
   let isAuth = isAuthenticated();
   let nextIsLogin = nextState.location.pathname === '/login';
   if (!isAuth && !nextIsLogin) {
     console.log('redirect to login', isAuth, nextIsLogin);
     replace({
       pathname: '/login',
-      state: { returnTo: nextIsLogin ? '/' : nextState.location.pathname }
+      state: { returnTo: nextIsLogin ? '/' : nextState.location.pathname },
     });
   } else if (isAuth && nextIsLogin) {
     console.log('redirect to root', isAuth, nextIsLogin)
@@ -68,7 +67,7 @@ export function getIdToken() {
       return null;
     }
     return idToken;
-  } catch (ex) { return null };
+  } catch (ex) { return null }
 }
 
 export function isTokenValid(token) {
@@ -76,7 +75,7 @@ export function isTokenValid(token) {
     if (Date.now() <= parseInt(JSON.parse(atob(token.split('.')[1])).exp) * 1000) {
       return true;
     }
-  } catch(ex) {}
+  } catch (ex) { console.error('Cannot parse token', ex); }
 
   console.warn('[Auth] JWT Expired.');
   return false;

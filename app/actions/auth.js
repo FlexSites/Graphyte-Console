@@ -2,6 +2,12 @@ import { createAction } from 'redux-actions';
 import { SIGN_IN, SIGN_OUT } from '../constants';
 import { push } from 'react-router-redux';
 
+export const signInSuccess = createAction(SIGN_IN);
+
+export const signOutSuccess = createAction(SIGN_OUT, () => {
+  return {};
+});
+
 export const signIn = ({ profile, token, returnTo = '/' }) => (dispatch) => {
   localStorage.setItem('profile', JSON.stringify(profile));
   localStorage.setItem('userToken', token);
@@ -15,10 +21,3 @@ export const signOut = () => (dispatch) => {
   dispatch(signOutSuccess());
   dispatch(push('/'))
 }
-
-export const signInSuccess = createAction(SIGN_IN);
-
-export const signOutSuccess = createAction(SIGN_OUT, () => {
-  console.log('called signout successJ!!!!!');
-  return {};
-});

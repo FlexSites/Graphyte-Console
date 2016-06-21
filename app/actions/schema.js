@@ -1,7 +1,5 @@
 import { createAction } from 'redux-actions'
 
-import { pushNotification } from './notifications';
-
 import Schema from '../services/Schema'
 import {
   ENTRY_LIST_PENDING,
@@ -12,8 +10,6 @@ import {
   SCHEMA_ITEM_ERROR,
   SCHEMA_ITEM_ADD,
   PUSH_NOTIFICATION,
-  SCHEMA_SAVE_SUCCESS,
-  SCHEMA_SAVE_ERROR,
   ENTRY_FILTER,
   ENTRY_SELECT,
   ENTRY_REMOVE,
@@ -38,21 +34,21 @@ export const schemaSavePending = createAction(
   PUSH_NOTIFICATION,
   (entry) => ({
     timeout: 1000,
-    message: `Saving "${entry.name}"`
+    message: `Saving "${entry.name}"`,
   })
 );
 export const schemaSaveSuccess = createAction(
   PUSH_NOTIFICATION,
   (entry) => ({
     timeout: 1000,
-    message: `Successfully saved "${entry.name}"`
+    message: `Successfully saved "${entry.name}"`,
   })
 );
 export const schemaSaveError = createAction(
   PUSH_NOTIFICATION,
-  (entry, ex) => ({
+  (entry) => ({
     type: 'error',
-    message: `Error saving "${entry.name}"`
+    message: `Error saving "${entry.name}"`,
   })
 );
 
@@ -61,21 +57,21 @@ export const schemaRemovePending = createAction(
   PUSH_NOTIFICATION,
   (entry) => ({
     timeout: 1000,
-    message: `Removing "${entry.name}"`
+    message: `Removing "${entry.name}"`,
   })
 );
 export const schemaRemoveSuccess = createAction(
   PUSH_NOTIFICATION,
   (entry) => ({
     timeout: 1000,
-    message: `Successfully removed "${entry.name}"`
+    message: `Successfully removed "${entry.name}"`,
   })
 );
 export const schemaRemoveError = createAction(
   PUSH_NOTIFICATION,
-  (entry, ex) => ({
+  (entry) => ({
     type: 'error',
-    message: `Error removing "${entry.name}"`
+    message: `Error removing "${entry.name}"`,
   })
 );
 
@@ -104,6 +100,6 @@ export const removeEntry = (entry) => (dispatch) => {
   dispatch({ type: ENTRY_REMOVE, payload: entry.id });
   dispatch(schemaRemovePending(entry));
   Schema.remove(entry.id)
-    .then((data) => dispatch(schemaRemoveSuccess(entry)))
+    .then(() => dispatch(schemaRemoveSuccess(entry)))
     .catch((ex) => dispatch(schemaRemoveError(entry, ex)))
 }

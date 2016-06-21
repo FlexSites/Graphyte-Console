@@ -5,10 +5,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Material UI
-import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import Edit from 'material-ui/svg-icons/editor/mode-edit';
-import Build from 'material-ui/svg-icons/action/build';
 import Code from 'material-ui/svg-icons/action/code';
 import Eye from 'material-ui/svg-icons/action/visibility';
 import Apps from 'material-ui/svg-icons/navigation/apps';
@@ -34,7 +32,7 @@ Navigation.defaultProps = {
 };
 
 
-function mapStateToProps(state) {
+function mapStateToProps() {
   return {}
 }
 

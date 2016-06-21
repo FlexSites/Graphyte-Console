@@ -11,7 +11,6 @@ import { entryFilter } from '../actions'
 import { push } from 'react-router-redux';
 
 // Material UI
-import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import List from 'material-ui/List';
@@ -32,7 +31,7 @@ export class EntryList extends Component {
     };
   }
 
-  shouldComponentUpdate(props, state) {
+  shouldComponentUpdate(props) {
     return props.filter !== this.props.filter
       || props.selected !== this.props.selected
       || props.list.length !== this.props.list.length

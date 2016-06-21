@@ -19,7 +19,7 @@ export class PlatformSelect extends Component {
     this.props.fetchList();
   }
 
-  shouldComponentUpdate(props, state) {
+  shouldComponentUpdate(props) {
     return props.list.length !== this.props.list.length || props.selected !== this.props.selected;
   }
 

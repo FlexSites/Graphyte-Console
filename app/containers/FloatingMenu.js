@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 // Connect
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { updateEntry, removeEntry, fetchSchemaEntry, persistEntry, pushNotification, duplicateEntry } from '../actions'
+import { removeEntry, persistEntry, duplicateEntry } from '../actions'
 
 // Material UI
 import FloatingActionButton from 'material-ui/FloatingActionButton';

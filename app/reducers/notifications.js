@@ -10,7 +10,7 @@ export default function(state = [], { type, payload }) {
       let newState = [...state];
       newState.pop();
       return newState;
-    }
+    },
   }[type]
 
   if (reducer) return reducer()

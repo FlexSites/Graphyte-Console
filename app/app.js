@@ -1,9 +1,9 @@
-import React from 'react'
-import { Provider } from 'react-redux'
-import { IndexRoute, Route, Router, browserHistory, Redirect } from 'react-router'
-import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux'
-import injectTapEventPlugin from 'react-tap-event-plugin'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import React from 'react' // eslint-disable-line no-unused-vars;
+import { Provider } from 'react-redux';
+import { IndexRoute, Route, Router, browserHistory, Redirect } from 'react-router';
+import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+
 // import muiTheme from './services/Theme';
 import App from './components/App.jsx';
 import { authenticated } from './lib/auth0';
@@ -14,21 +14,20 @@ import Preview from './containers/GraphiQL';
 import MockEditor from './containers/MockEditor';
 import DefinitionEditor from './containers/DefinitionEditor';
 import ResolveEditor from './containers/ResolveEditor';
+import reducers from './reducers';
 
-import reducers from './reducers'
-
-import { configureStore } from './lib/store'
+import { configureStore } from './lib/store';
 import './global.css'
 
 // Redux Middleware
-import thunk from 'redux-thunk'
+import thunk from 'redux-thunk';
 
 // Needed for onTouchTap
 injectTapEventPlugin()
 
 const middleware = [
   thunk,
-  routerMiddleware(browserHistory)
+  routerMiddleware(browserHistory),
 ];
 
 /* eslint-disable react/display-name */ // This is not a react component

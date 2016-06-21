@@ -7,90 +7,26 @@ import { updateEntry, removeEntry, fetchEntryList, persistEntry, pushNotificatio
 import { push } from 'react-router-redux';
 
 // Libs
-import brace from 'brace';
-import AceEditor from 'react-ace';
-import { parse } from 'graphql/language';
-import { get, set } from 'object-path';
-import 'brace/mode/java';
+import { get } from 'object-path';
 
 // Material UI
-import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import CircularProgress from 'material-ui/CircularProgress';
-import { Tabs, Tab } from 'material-ui/Tabs';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
+import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Definition from 'material-ui/svg-icons/action/description';
 import Cloud from 'material-ui/svg-icons/file/cloud';
 import FlipToBack from 'material-ui/svg-icons/action/flip-to-back';
-import { yellow700, cyan500, white, darkBlack, fullBlack, grey800, grey900, grey100, grey700, grey500, orange500, green500 } from 'material-ui/styles/colors';
 
 // Components
-import CodeEditor from '../components/CodeEditor.jsx';
 import FloatingMenu from '../containers/FloatingMenu';
 import EntryList from '../containers/EntryList';
 
 export class EntryEditor extends Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      entry: {},
-      possibleResolves: [],
-      currentTab: 'definition',
-    };
-
-    this.persistEntry = this.persistEntry.bind(this);
-    this.removeEntry = this.removeEntry.bind(this);
-    this.handleTabChange = this.handleTabChange.bind(this);
-
-    this.handleDefChange = this.onChange.bind(this, 'definition');
-    this.handleResChange = function (key, value){
-      this.onChange(`resolve.${this.state.entry.name}.${key}`, value);
-    }.bind(this);
-    this.handleMockChange = this.onChange.bind(this, 'mock');
-  }
-
-  handleTabChange(value) {
-    if (this.state.currentTab === 'definition' && value === 'resolver') {
-      let possibleResolves = getFields(this.state.entry, this.props.notify);
-      if (!possibleResolves.length) return;
-      this.setState({
-        possibleResolves,
-      });
-    }
-    this.setState({
-      currentTab: value,
-    });
-  }
-
-  onChange(prop, value) {
-    let newEntry = JSON.parse(JSON.stringify(this.state.entry));
-    set(newEntry, prop, value);
-    set(newEntry, 'modified', true);
-    this.props.updateEntry(newEntry);
-    console.log('on change', newEntry);
-    this.setState({
-      entry: newEntry,
-    })
-  }
-
-  removeEntry() {
-    this.props.removeEntry(this.state.entry);
-  }
-
-  persistEntry() {
-    this.props.persistEntry(this.state.entry);
   }
 
   componentWillMount() {
     this.props.fetchList();
-  }
-
-  componentWillReceiveProps(props) {
-    this.setState({
-      entry: props.entry,
-    })
   }
 
   isActive(tab) {
@@ -100,7 +36,6 @@ export class EntryEditor extends Component {
   }
 
   render() {
-    let resolves = get(this.state.entry, ['resolve', this.state.entry.name], {});
     return (
       <div style={{ display: 'flex' }}>
         <FloatingMenu />
@@ -141,26 +76,6 @@ EntryEditor.defaultProps = {
   updateEntry: () => {},
 };
 
-
-function getFields({ definition, name }, notify) {
-  if (!definition || !name) return [];
-  let doc;
-  try { doc = parse(`type ${name} { ${definition} }`); }
-  catch(ex) {
-    notify({ message: 'Invalid GraphQL' });
-    console.error('Invalid GraphQL', ex); return [];
-  }
-  return get(doc, 'definitions.0.fields', [])
-    .map(({ name, type }) => ({ name: name.value, ...getType(type) }));
-}
-
-function getType(field, isRequired, isList) {
-  let { kind, type, name } = field;
-  if (kind === 'NamedType') return { type: name.value, isRequired, isList };
-  if (kind === 'ListType') return getType(type, isRequired, true);
-  if (kind === 'NonNullType') return getType(type, true, isList);
-}
-
 EntryEditor.contextTypes = {
   muiTheme: React.PropTypes.object.isRequired,
 };
@@ -174,8 +89,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     notify: pushNotification,
-    persistEntry: persistEntry,
-    removeEntry: removeEntry,
+    persistEntry,
+    removeEntry,
     fetchList: fetchEntryList,
     push,
     updateEntry,

@@ -3,25 +3,16 @@ import React, { Component } from 'react'
 // Connect
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { ENTRY_TYPES } from '../constants';
-import { pushNotification, fetchEntryList, entrySelect, schemaItemAdd, entryFilter } from '../actions'
+import { schemaItemAdd } from '../actions'
 
 // Libs
-import uuid from '../lib/uuid'
+import uuid from 'uuid';
 
 // Material UI
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Dialog from 'material-ui/Dialog';
-import Drawer from 'material-ui/Drawer';
-import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
-import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
-import { blue500, yellow600, lightGreen300, white } from 'material-ui/styles/colors'
-import { List } from 'material-ui/List';
-import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
-
-import EditMenuItem from '../components/EditMenuItem.jsx';
 
 export default class EntryList extends Component {
   constructor(props) {
@@ -50,9 +41,9 @@ export default class EntryList extends Component {
 
   toggleNewEntryDialog() {
     this.setState({
-      open: !this.state.open
+      open: !this.state.open,
     });
-  };
+  }
 
   render() {
     const actions = [
@@ -111,7 +102,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    addEntry: (entry) => schemaItemAdd({ id: uuid(), ...entry }),
+    addEntry: (entry) => schemaItemAdd({ id: uuid.v4(), ...entry }),
   }, dispatch)
 }
 

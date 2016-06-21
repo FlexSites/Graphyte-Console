@@ -1,6 +1,17 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import {fade} from 'material-ui/utils/colorManipulator';
-import { yellow700, cyan500, white, darkBlack, fullBlack, grey800, grey900, grey100, grey700, grey500, orange500, green500 } from 'material-ui/styles/colors';
+import {
+    yellow700,
+    cyan500,
+    white,
+    fullBlack,
+    grey800,
+    grey900,
+    grey100,
+    grey700,
+    grey500,
+    green500,
+} from 'material-ui/styles/colors';
 
 let theme = getMuiTheme({
   palette: {
@@ -20,7 +31,7 @@ let theme = getMuiTheme({
     shadowColor: fullBlack,
     alert1Color: yellow700,
     secondary1Color: cyan500,
-  }
+  },
 });
 
 theme.listItem.secondaryTextColor = '#777';

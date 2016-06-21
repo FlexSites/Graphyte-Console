@@ -3,7 +3,6 @@ import {
   ENTRY_LIST_PENDING,
   SCHEMA_ITEM_ADD,
   ENTRY_FILTER,
-  ENTRY_SELECT,
   ENTRY_REMOVE,
   UPDATE_ENTRY,
 } from '../constants';
@@ -13,7 +12,7 @@ import { LOCATION_CHANGE } from 'react-router-redux';
 const SCHEMA_EDIT_REGEX = /\/edit\/([^/]+)/;
 
 export default function (state = {}, action) {
-  let { loading, errors, list, selected } = Object.assign({ loading: false, errors: [], list: [] }, state);
+  let { list, selected } = Object.assign({ loading: false, errors: [], list: [] }, state);
 
   switch (action.type) {
     case LOCATION_CHANGE:

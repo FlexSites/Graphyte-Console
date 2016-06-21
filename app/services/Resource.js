@@ -56,22 +56,26 @@ export default class Resource {
 
     if (!token) return Promise.reject('Unauthorized');
 
-    if (token) params.headers = {
-      Authorization: `Bearer ${token}`,
-      // TODO: Support multi-platform editing
-      'Graphyte-Platform': 'flexsites',
+    if (token) {
+      params.headers = {
+        'Authorization': `Bearer ${token}`,
+
+        // TODO: Support multi-platform editing
+        'Graphyte-Platform': 'flexsites',
+      }
     }
     return axios(params)
         .then(res => {
           const delay = Date.now() - start
           if (delay > MIN_REQUEST_TIME) return res
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve) => {
             setTimeout(() => resolve(res), MIN_REQUEST_TIME - delay)
           })
         })
         .then(({ data }) => data)
         .catch(ex => {
           console.error('ERR', ex)
+
           // if (ex.status === 401) localStorage.removeItem('userToken');
         })
   }

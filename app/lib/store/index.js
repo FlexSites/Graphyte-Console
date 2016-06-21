@@ -2,7 +2,7 @@ import {
   createStore,
   applyMiddleware,
   compose,
-  combineReducers
+  combineReducers,
 } from 'redux'
 
 const devToolsExist = typeof window === 'object'

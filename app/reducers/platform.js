@@ -14,7 +14,7 @@ export default function (state = { loading: false, errors: [], list: [] }, actio
     case 'PLATFORM_ADD':
       return {
         list: [...state.list, action.payload],
-        item: action.payload
+        item: action.payload,
       }
     case 'PLATFORM_SELECT':
       return {

@@ -1,6 +1,7 @@
-import { render } from 'react-dom'
-import app from './app'
+import { render } from 'react-dom';
+import app from './app';
 import { getProfile, getIdToken } from './lib/auth0';
+import { set } from 'object-path';
 
 
 // let token = localStorage.getItem('userToken')

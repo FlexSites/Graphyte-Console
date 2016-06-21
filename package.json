@@ -13,7 +13,10 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.development.js",
     "build": "webpack --config webpack.production.js",
-    "watch": "npm start"
+    "watch": "npm start",
+    "lint": "eslint app",
+    "pretest": "npm run lint",
+    "test": "cd ."
   },
   "repository": {
     "type": "git",
@@ -60,7 +63,7 @@
     "eslint": "^2.10.2",
     "eslint-config-ksmithut": "^2.1.1",
     "eslint-plugin-mocha": "^2.2.0",
-    "eslint-plugin-react": "^5.1.1",
+    "eslint-plugin-react": "^5.2.2",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "graphiql": "^0.7.2",
