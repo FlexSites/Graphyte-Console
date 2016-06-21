@@ -10,6 +10,7 @@ import { authenticated } from './lib/auth0';
 import Login from './containers/Login.jsx';
 
 import Editor from './components/Editor.jsx';
+import Preview from './containers/GraphiQL';
 
 import reducers from './reducers'
 
@@ -37,6 +38,7 @@ export default (initialState) => {
       <Router history={history}>
         <Route path="/" component={App}>
           <Route path="login" component={Login} onEnter={authenticated} />
+          <Route path="preview" component={Preview} onEnter={authenticated} />
           <IndexRoute component={Editor} onEnter={authenticated} onChange={authenticated} />
         </Route>
       </Router>
