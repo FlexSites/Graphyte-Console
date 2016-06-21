@@ -40,7 +40,7 @@ export default class MainNav extends Component {
       <Toolbar>
         <ToolbarGroup firstChild={true}>
           <IconButton>
-            <img src={Logo} width="32" height="34" />
+            <img src={`/${Logo}`} width="32" height="34" />
           </IconButton>
           <ToolbarTitle text="Graphyte" style={{ fontWeight: '100', marginLeft: '5px' }} />
         </ToolbarGroup>
