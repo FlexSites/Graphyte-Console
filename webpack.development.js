@@ -16,7 +16,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
-    filename: '[name].js',
+    filename: '/[name].js',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -24,7 +24,7 @@ module.exports = {
       inject: 'body',
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendor', '/vendor.bundle.js'),
   ],
   module: {
     loaders: [{

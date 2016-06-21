@@ -1,6 +1,6 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import { IndexRoute, Route, Router, browserHistory } from 'react-router'
+import { IndexRoute, Route, Router, browserHistory, Redirect } from 'react-router'
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -9,8 +9,11 @@ import App from './components/App.jsx';
 import { authenticated } from './lib/auth0';
 import Login from './containers/Login.jsx';
 
-import Editor from './components/Editor.jsx';
+import Editor from './containers/EntryEditor';
 import Preview from './containers/GraphiQL';
+import MockEditor from './containers/MockEditor';
+import DefinitionEditor from './containers/DefinitionEditor';
+import ResolveEditor from './containers/ResolveEditor';
 
 import reducers from './reducers'
 
@@ -36,10 +39,16 @@ export default (initialState) => {
   return (
     <Provider store={store}>
       <Router history={history}>
+        <Redirect from="/" to="/edit" />
         <Route path="/" component={App}>
           <Route path="login" component={Login} onEnter={authenticated} />
           <Route path="preview" component={Preview} onEnter={authenticated} />
-          <IndexRoute component={Editor} onEnter={authenticated} onChange={authenticated} />
+          <Route path="edit" component={Editor} onEnter={authenticated} onChange={authenticated}>
+            <Route path=":id/resolve" component={ResolveEditor} />
+            <Route path=":id/mock" component={MockEditor} />
+            <Route path=":id" component={DefinitionEditor} />
+            <IndexRoute component={DefinitionEditor} />
+          </Route>
         </Route>
       </Router>
     </Provider>
