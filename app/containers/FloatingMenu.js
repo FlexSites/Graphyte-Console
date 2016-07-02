@@ -30,13 +30,13 @@ class FloatingMenu extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column', zIndex: 999, position: 'fixed', bottom: '20px', right: '20px' }}>
         <FloatingActionButton
           secondary={true}
           onTouchTap={this.remove}
           mini={true}
-          iconStyle={{ fill: darkBlack }}
-          style={{ position: 'fixed', bottom: '142px', right: '28px' }}>
+          style={{ margin: '0 8px 10px' }}
+          iconStyle={{ fill: darkBlack }}>
           <Delete />
         </FloatingActionButton>
 
@@ -44,16 +44,15 @@ class FloatingMenu extends Component {
           secondary={true}
           onTouchTap={this.persist}
           mini={true}
-          iconStyle={{ fill: darkBlack }}
-          style={{ position: 'fixed', bottom: '90px', right: '28px' }}>
+          style={{ margin: '0 8px 10px' }}
+          iconStyle={{ fill: darkBlack }}>
           <Copy />
         </FloatingActionButton>
 
         <FloatingActionButton
           secondary={true}
           onTouchTap={this.persist}
-          iconStyle={{ fill: darkBlack }}
-          style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
+          iconStyle={{ fill: darkBlack }}>
           <Save />
         </FloatingActionButton>
       </div>

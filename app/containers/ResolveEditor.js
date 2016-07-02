@@ -23,29 +23,28 @@ export class EntryEditor extends Component {
     };
 
     this.handleResChange = function (key, value){
-      this.onChange(`resolve.${this.state.entry.name}.${key}`, value);
+      this.onChange(`resolve.${this.props.entry.name}.${key}`, value);
     }.bind(this);
   }
 
   onChange(prop, value) {
-    let newEntry = JSON.parse(JSON.stringify(this.state.entry));
+    let newEntry = JSON.parse(JSON.stringify(this.props.entry));
     set(newEntry, prop, value);
-    set(newEntry, 'modified', true);
-    this.props.updateEntry(newEntry);
+    this.props.updateEntry(newEntry.resolve);
     this.setState({
       entry: newEntry,
     })
   }
 
   componentWillReceiveProps(props) {
-    console.log('will', props);
+    if (this.state.possible.length) return;
     this.setState({
       possible: getFields(props.entry, this.props.notify) || [],
-    })
+    });
   }
 
   render() {
-    let resolves = get(this.state.entry, ['resolve', this.state.entry.name], {});
+    let resolves = get(this.props.entry, ['resolve', this.props.entry.name], {});
     return (
       <div>
         {(this.state.possible).map(({ name, type, isRequired, isList }, idx) => {
@@ -112,7 +111,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    updateEntry: (resolver) => updateEntry({ resolver }),
+    updateEntry: (resolve) => updateEntry({ resolve }),
     notify: pushNotification,
   }, dispatch);
 }
